@@ -1,20 +1,30 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
+import { apiFetch } from '../api/client'
+import { useAuth } from '../context/AuthContext'
 
 export default function Login() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
 
-  function handleSubmit(e: React.FormEvent) {
+  const { login: doLogin } = useAuth()
+  const [showPwd, setShowPwd] = useState(false)
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!email || !password) {
       alert('Por favor ingresa tu correo y contraseña')
       return
     }
-    // Simulación de inicio de sesión exitoso
-    alert('Inicio de sesión exitoso (demo)')
-    navigate('/')
+    try {
+      const data = await apiFetch('/auth/login', { method:'POST', body: JSON.stringify({ email, password }) })
+      doLogin(data.token, data.user)
+      if (data.user.rol === 'admin') navigate('/admin')
+      else navigate('/')
+    } catch (err:any) {
+      alert(err.message || 'Error al iniciar sesión')
+    }
   }
   return (
     <div style={{minHeight:'100vh', position:'relative', overflow:'hidden', background:'linear-gradient(135deg, #fff7ec 0%, #fff 40%, #fef3e7 100%)'}}>
@@ -56,7 +66,10 @@ export default function Login() {
             <label style={{display:'block', fontSize:12, color:'#7a7a7a', margin:'14px 0 6px'}}>Contraseña</label>
             <div style={{display:'flex', alignItems:'center', gap:8, border:'1px solid #f0e7de', borderRadius:12, padding:'12px 14px', background:'#fff', boxShadow:'inset 0 0 0 1px rgba(16,185,129,0.06)'}}>
               <img src="/images/i-lock.svg" alt="" style={{width:18, opacity:.9}} />
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" autoComplete="current-password" style={{border:'none', outline:'none', width:'100%', background:'transparent'}} />
+              <input type={showPwd? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" autoComplete="current-password" style={{border:'none', outline:'none', width:'100%', background:'transparent'}} />
+              <button type="button" onClick={()=>setShowPwd(!showPwd)} style={{background:'transparent', border:'none', cursor:'pointer'}}>
+                <img src={showPwd? '/images/i-eye-off.svg' : '/images/i-eye.svg'} alt="mostrar" style={{width:18, opacity:.9}} />
+              </button>
             </div>
 
             {/* Botones */}
