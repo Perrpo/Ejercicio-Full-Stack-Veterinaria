@@ -58,19 +58,6 @@ frontend/
     index.css            # Estilos base, variables y utilidades
 ```
 
-### Personalización de imágenes (coloca tus archivos en `frontend/public/images`)
-- Logo cabecera: `logo-mark.svg`
-- Icono del botón de sesión: `icon-login.svg`
-- Imagen del héroe: `gato-hero.png`
-- Beneficios: `icon-location.svg`, `icon-clock.svg`, `icon-shield.svg`
-- Servicios: `icon-home.svg`, `icon-lab.svg`, `icon-card.svg`
-- Login/Register:
-  - Logo futurista: `logo-pawtech.svg`
-  - Inputs: `i-mail.svg`, `i-lock.svg`, `i-user.svg`, `i-phone.svg`
-  - Line art de fondo: `line-dog.svg`, `line-cat.svg`
-
-Sustituye los archivos manteniendo el mismo nombre para que se reflejen automáticamente.
-
 ### Decisiones de diseño
 - Estética minimalista y sofisticada con glassmorphism en tarjetas.
 - Degradados cálidos y acentos verdes suaves; sombras sutiles y borde luminoso.

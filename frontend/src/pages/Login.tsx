@@ -37,7 +37,13 @@ export default function Login() {
             <div style={{fontWeight:700, fontSize:20}}>VetCare</div>
           </div>
 
-          <h1 style={{margin:'8px 0 18px', fontSize:22, color:'#7a2e12'}}>Bienvenido</h1>
+          <div style={{display:'flex', alignItems:'center', justifyContent:'space-between'}}>
+            <h1 style={{margin:'8px 0 18px', fontSize:22, color:'#7a2e12'}}>Bienvenido</h1>
+            <Link to="/" style={{display:'inline-flex', alignItems:'center', gap:6, textDecoration:'none', fontSize:12, color:'#7a2e12'}}>
+              <img src="/images/i-back.svg" alt="" style={{width:16}} />
+              Volver al inicio
+            </Link>
+          </div>
 
           {/* Inputs */}
           <form onSubmit={handleSubmit}>

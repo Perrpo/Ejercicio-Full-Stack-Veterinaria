@@ -30,7 +30,13 @@ export default function Register() {
             <img src="/images/logo-pawtech.svg" alt="VetCare" style={{width:28, height:28}} />
             <div style={{fontWeight:700, fontSize:20}}>VetCare</div>
           </div>
-          <h1 style={{margin:'8px 0 18px', fontSize:22, color:'#7a2e12'}}>Crear Cuenta</h1>
+          <div style={{display:'flex', alignItems:'center', justifyContent:'space-between'}}>
+            <h1 style={{margin:'8px 0 18px', fontSize:22, color:'#7a2e12'}}>Crear Cuenta</h1>
+            <Link to="/" style={{display:'inline-flex', alignItems:'center', gap:6, textDecoration:'none', fontSize:12, color:'#7a2e12'}}>
+              <img src="/images/i-back.svg" alt="" style={{width:16}} />
+              Volver al inicio
+            </Link>
+          </div>
           <form onSubmit={handleSubmit}>
             <label style={{display:'block', fontSize:12, color:'#7a7a7a', marginBottom:6}}>Nombre Completo</label>
             <div style={{display:'flex', alignItems:'center', gap:8, border:'1px solid #f0e7de', borderRadius:12, padding:'12px 14px', background:'#fff'}}>
