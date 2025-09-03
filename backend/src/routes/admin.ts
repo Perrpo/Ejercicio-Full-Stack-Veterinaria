@@ -208,7 +208,7 @@ router.post('/pagos', authAdmin, async (req,res)=>{
 
 router.put('/pagos/:id', authAdmin, async (req,res)=>{
   const id = Number(req.params.id)
-  const p = pagoSchema.partial({id_cita:true}).safeParse(req.body)
+  const p = pagoSchema.partial().safeParse(req.body)
   if(!p.success) return res.status(400).json({errors:p.error.flatten()})
   await db.query('UPDATE pagos SET ? WHERE id_pago = ?', [p.data, id])
   res.json({message:'Actualizado'})

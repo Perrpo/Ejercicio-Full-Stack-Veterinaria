@@ -5,6 +5,7 @@ type User = { id: number; nombre: string; apellido: string; rol: 'cliente'|'vete
 type AuthContextType = {
   user: User | null
   token: string | null
+  loading: boolean
   login: (token: string, user: User) => void
   logout: () => void
 }
@@ -14,11 +15,21 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [token, setToken] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const t = localStorage.getItem('token')
-    const u = localStorage.getItem('user')
-    if (t && u) { setToken(t); setUser(JSON.parse(u)) }
+    // Usar setTimeout para evitar el parpadeo del botón
+    const timer = setTimeout(() => {
+      const t = localStorage.getItem('token')
+      const u = localStorage.getItem('user')
+      if (t && u) { 
+        setToken(t); 
+        setUser(JSON.parse(u)) 
+      }
+      setLoading(false)
+    }, 100) // Delay mínimo para evitar parpadeos
+
+    return () => clearTimeout(timer)
   }, [])
 
   function login(t: string, u: User) {
@@ -33,7 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, token, loading, login, logout }}>
       {children}
     </AuthContext.Provider>
   )

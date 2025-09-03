@@ -1,8 +1,10 @@
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function Navbar() {
-  const { user, logout } = useAuth()
+  const { user, logout, loading } = useAuth()
+  const location = useLocation()
+  
   return (
     <header style={{background:'#ffffff',borderBottom:'1px solid #f1ebe4'}}> 
       <div className="container-app" style={{display:'flex',alignItems:'center',justifyContent:'space-between',height:64}}>
@@ -11,23 +13,34 @@ export default function Navbar() {
           <strong style={{fontSize:18}}>VetCare</strong>
         </div>
         <nav>
-          {!user && (
-            <Link to="/login" style={{textDecoration:'none'}}>
-              <button className="btn-primary" aria-label="Iniciar Sesión" style={{display:'inline-flex',alignItems:'center',gap:8}}>
-                <img src="/images/icon-login.svg" alt="" style={{width:16,height:16}} />
-                Iniciar Sesión
-              </button>
-            </Link>
-          )}
-          {user && (
-            <div style={{display:'inline-flex', gap:8}}>
-              {user.rol === 'admin' && (
-                <Link to="/admin" style={{textDecoration:'none'}}>
-                  <button className="btn-ghost">Panel</button>
+          {loading ? (
+            <div style={{
+              width: 120,
+              height: 40,
+              background: '#f3f4f6',
+              borderRadius: 8,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: '#6b7280',
+              fontSize: 14
+            }}>
+              Cargando...
+            </div>
+          ) : (
+            <>
+              {!user && location.pathname !== '/login' && (
+                <Link to="/login" style={{textDecoration:'none'}}>
+                  <button className="btn-primary" aria-label="Iniciar Sesión" style={{display:'inline-flex',alignItems:'center',gap:8}}>
+                    <img src="/images/icon-login.svg" alt="" style={{width:16,height:16}} />
+                    Iniciar Sesión
+                  </button>
                 </Link>
               )}
-              <button className="btn-primary" onClick={()=>{ logout(); window.location.href='/' }}>Salir</button>
-            </div>
+              {user && (
+                <button className="btn-primary" onClick={()=>{ logout(); window.location.href='/' }}>Salir</button>
+              )}
+            </>
           )}
         </nav>
       </div>
