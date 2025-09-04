@@ -1,8 +1,33 @@
-import { Router } from 'express'
+import { Router, Request, Response, NextFunction } from 'express'
 import { z } from 'zod'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import { db } from '../server'
+
+// Extender la interfaz Request para incluir el usuario
+declare global {
+  namespace Express {
+    interface Request {
+      user?: any
+    }
+  }
+}
+
+// Middleware para verificar token JWT
+export function authUser(req: Request, res: Response, next: NextFunction) {
+  try {
+    const token = req.headers.authorization?.replace('Bearer ', '')
+    if (!token) {
+      return res.status(401).json({ message: 'Token no proporcionado' })
+    }
+    
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as any
+    req.user = decoded
+    next()
+  } catch (error) {
+    return res.status(401).json({ message: 'Token inválido' })
+  }
+}
 
 const router = Router()
 

@@ -10,14 +10,14 @@ INSERT INTO usuarios (nombre, apellido, email, password, telefono, direccion, ro
 
 -- Servicios
 INSERT INTO servicios (nombre, descripcion, precio) VALUES
-('Consulta General', 'Revisión médica general del paciente', 180000.00),
-('Vacunación', 'Administración de vacunas', 120000.00),
-('Cirugía Menor', 'Procedimientos quirúrgicos menores', 300000.00),
-('Análisis de Sangre', 'Extracción y análisis de sangre', 200000.00),
-('Radiografía', 'Radiografía digital para diagnóstico', 250000.00),
-('Limpieza Dental', 'Limpieza profesional de dientes', 220000.00),
-('Urgencias', 'Atención médica urgente', 350000.00),
-('Peluquería Canina', 'Servicio de peluquería y estética', 160000.00);
+('Consulta General', 'Revisión médica general del paciente', 180000),
+('Vacunación', 'Administración de vacunas', 120000),
+('Cirugía Menor', 'Procedimientos quirúrgicos menores', 300000),
+('Análisis de Sangre', 'Extracción y análisis de sangre', 200000),
+('Radiografía', 'Radiografía digital para diagnóstico', 250000),
+('Limpieza Dental', 'Limpieza profesional de dientes', 220000),
+('Urgencias', 'Atención médica urgente', 350000),
+('Peluquería Canina', 'Servicio de peluquería y estética', 160000);
 
 -- Pacientes (propietarios: María=2, Ana=4)
 INSERT INTO pacientes (id_usuario, nombre, especie, raza, edad, peso) VALUES
@@ -37,10 +37,18 @@ INSERT INTO citas (id_usuario, id_paciente, id_servicio, fecha_cita, estado) VAL
 
 -- Pagos (en COP)
 INSERT INTO pagos (id_cita, metodo_pago, monto, fecha_pago, estado) VALUES
-(1, 'tarjeta_credito', 180000.00, NOW(), 'pagado'),
-(2, 'efectivo', 120000.00, NOW(), 'pagado'),
-(3, 'transferencia', 35000.00, NOW(), 'pendiente'),
-(4, 'tarjeta_credito', 120000.00, NOW(), 'fallido'),
-(5, 'efectivo', 95000.00, NOW(), 'pagado');
+(1, 'tarjeta_credito', 180000, NOW(), 'pagado'),
+(2, 'efectivo', 120000, NOW(), 'pagado'),
+(3, 'transferencia', 35000, NOW(), 'pendiente'),
+(4, 'tarjeta_credito', 120000, NOW(), 'fallido'),
+(5, 'efectivo', 95000, NOW(), 'pagado');
+
+-- Exámenes
+INSERT INTO examenes (id_paciente, tipo_examen, fecha_examen, resultado, observaciones, estado) VALUES
+(1, 'Análisis de Sangre', '2024-09-10 08:00:00', 'Valores normales', 'Paciente en buen estado general', 'completado'),
+(2, 'Radiografía Torácica', '2024-09-12 10:00:00', 'Sin hallazgos patológicos', 'Pulmones y corazón normales', 'completado'),
+(3, 'Análisis de Orina', '2024-09-13 14:00:00', 'Pendiente de resultados', 'Muestra enviada al laboratorio', 'en_proceso'),
+(4, 'Ecografía Abdominal', '2024-09-14 09:00:00', 'Órganos internos normales', 'No se observan alteraciones', 'completado'),
+(5, 'Análisis de Plumas', '2024-09-11 11:00:00', 'Pendiente de resultados', 'Muestra en análisis', 'pendiente');
 
 

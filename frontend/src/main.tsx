@@ -7,12 +7,14 @@ import Landing from './pages/Landing.tsx'
 import Login from './pages/Login.tsx'
 import Register from './pages/Register.tsx'
 import Admin from './pages/Admin.tsx'
+import Dashboard from './pages/Dashboard.tsx'
 
 const router = createBrowserRouter([
   { path: '/', element: <Landing /> },
   { path: '/login', element: <Login /> },
   { path: '/register', element: <Register /> },
   { path: '/admin', element: <Admin /> },
+  { path: '/dashboard', element: <Dashboard /> },
 ])
 
 createRoot(document.getElementById('root')!).render(

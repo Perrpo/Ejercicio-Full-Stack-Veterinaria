@@ -563,6 +563,12 @@ export default function Admin(){
     try {
       let payload: Partial<Pago>
       
+      // Validar que los datos requeridos estén presentes
+      if (!data.id_cita || !data.metodo_pago || !data.monto || !data.estado) {
+        alert('Por favor, completa todos los campos requeridos')
+        return
+      }
+      
       if(editingPayment){
         // Para editar, solo enviamos los campos que queremos actualizar
         payload = { 
@@ -570,23 +576,42 @@ export default function Admin(){
           monto: Number(data.monto)
         }
         console.log('Actualizando pago existente:', editingPayment.id_pago, payload)
-        await apiFetch(`/admin/pagos/${editingPayment.id_pago}`, { method:'PUT', body: JSON.stringify(payload) })
+        const response = await apiFetch(`/admin/pagos/${editingPayment.id_pago}`, { method:'PUT', body: JSON.stringify(payload) })
+        console.log('Respuesta del servidor:', response)
       } else {
-        // Para crear nuevo, incluimos la fecha
+        // Para crear nuevo, incluimos la fecha en formato MySQL compatible
+        const now = new Date();
+        const mysqlDate = now.getFullYear() + '-' + 
+                         String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                         String(now.getDate()).padStart(2, '0') + ' ' + 
+                         String(now.getHours()).padStart(2, '0') + ':' + 
+                         String(now.getMinutes()).padStart(2, '0') + ':' + 
+                         String(now.getSeconds()).padStart(2, '0');
+        
         payload = { 
           ...data, 
           monto: Number(data.monto),
-          fecha_pago: new Date().toISOString()
+          fecha_pago: mysqlDate
         }
         console.log('Creando nuevo pago:', payload)
-        await apiFetch('/admin/pagos', { method:'POST', body: JSON.stringify(payload) })
+        const response = await apiFetch('/admin/pagos', { method:'POST', body: JSON.stringify(payload) })
+        console.log('Respuesta del servidor:', response)
       }
       setOpenPaymentModal(false)
       await fetchAll()
-    } catch (error) {
-      console.error('Error al guardar el pago:', error)
-      alert('Error al guardar el pago. Por favor, inténtalo de nuevo.')
-    }
+         } catch (error: unknown) {
+       console.error('Error al guardar el pago:', error)
+       // Mostrar información más detallada del error
+       let errorMessage = 'Error al guardar el pago. '
+       if (error instanceof Error && error.message.includes('Error de red')) {
+         errorMessage += 'El servidor no respondió correctamente. Verifica que esté funcionando.'
+       } else if (error instanceof Error) {
+         errorMessage += error.message
+       } else {
+         errorMessage += 'Error desconocido'
+       }
+       alert(errorMessage)
+     }
   }
 
   async function deletePayment(p: Pago){
@@ -871,14 +896,45 @@ function PatientForm({owners, initial, onSubmit, onCancel}:{owners:Usuario[]; in
           <label style={{fontSize:12,color:'#6b7280'}}>Raza</label>
           <input value={raza} onChange={(e)=>setRaza(e.target.value)} style={{width:'100%', padding:'10px 12px', border:'1px solid #eee', borderRadius:10}} />
         </div>
-        <div>
-          <label style={{fontSize:12,color:'#6b7280'}}>Edad (años)</label>
-          <input type="number" min={0} value={edad} onChange={(e)=>setEdad(Number(e.target.value))} style={{width:'100%', padding:'10px 12px', border:'1px solid #eee', borderRadius:10}} />
-        </div>
-        <div>
-          <label style={{fontSize:12,color:'#6b7280'}}>Peso (kg)</label>
-          <input type="number" step="0.01" min={0} value={peso} onChange={(e)=>setPeso(Number(e.target.value))} style={{width:'100%', padding:'10px 12px', border:'1px solid #eee', borderRadius:10}} />
-        </div>
+                 <div>
+           <label style={{fontSize:12,color:'#6b7280'}}>Edad (años)</label>
+           <input 
+             type="text" 
+             value={edad || ''} 
+             onChange={(e)=>{
+               const value = e.target.value.replace(/[^0-9]/g, '');
+               setEdad(value ? Number(value) : 0);
+             }} 
+             placeholder="0"
+             style={{width:'100%', padding:'10px 12px', border:'1px solid #eee', borderRadius:10}} 
+           />
+         </div>
+         <div>
+           <label style={{fontSize:12,color:'#6b7280'}}>Peso (kg)</label>
+           <input 
+             type="text" 
+             value={peso ? peso.toLocaleString('es-CO', { minimumFractionDigits: 1, maximumFractionDigits: 2 }) : ''} 
+             onChange={(e)=>{
+               // Remover todos los caracteres excepto números y punto
+               const value = e.target.value.replace(/[^0-9.]/g, '');
+               // Permitir solo un punto decimal y máximo 2 decimales
+               const parts = value.split('.');
+               if (parts.length <= 2 && (!parts[1] || parts[1].length <= 2)) {
+                 setPeso(value ? Number(value) : 0);
+               }
+             }}
+             onFocus={(e) => {
+               // Al hacer foco, mostrar el número sin formatear para facilitar la edición
+               e.target.value = peso.toString();
+             }}
+             onBlur={(e) => {
+               // Al perder el foco, formatear el número
+               e.target.value = peso ? peso.toLocaleString('es-CO', { minimumFractionDigits: 1, maximumFractionDigits: 2 }) : '';
+             }}
+             placeholder="0.0"
+             style={{width:'100%', padding:'10px 12px', border:'1px solid #eee', borderRadius:10}} 
+           />
+         </div>
       </div>
       <div style={{display:'flex', justifyContent:'flex-end', gap:8, marginTop:16}}>
         <button type="button" className="btn-ghost" onClick={onCancel}>Cancelar</button>
@@ -903,10 +959,29 @@ function ServiceForm({initial, onSubmit, onCancel}:{initial?:Partial<Servicio>; 
           <label style={{fontSize:12,color:'#6b7280'}}>Descripción</label>
           <textarea value={descripcion} onChange={(e)=>setDescripcion(e.target.value)} rows={3} required style={{width:'100%', padding:'10px 12px', border:'1px solid #eee', borderRadius:10}} />
         </div>
-        <div>
-          <label style={{fontSize:12,color:'#6b7280'}}>Precio (COP)</label>
-          <input type="number" min={0} value={precio} onChange={(e)=>setPrecio(Number(e.target.value))} required style={{width:'100%', padding:'10px 12px', border:'1px solid #eee', borderRadius:10}} />
-        </div>
+                 <div>
+           <label style={{fontSize:12,color:'#6b7280'}}>Precio (COP)</label>
+           <input 
+             type="text" 
+             value={precio ? precio.toLocaleString('es-CO') : ''} 
+             onChange={(e)=>{
+               // Remover todos los caracteres no numéricos
+               const value = e.target.value.replace(/[^0-9]/g, '');
+               setPrecio(value ? Number(value) : 0);
+             }}
+             onFocus={(e) => {
+               // Al hacer foco, mostrar el número sin formatear para facilitar la edición
+               e.target.value = precio.toString();
+             }}
+             onBlur={(e) => {
+               // Al perder el foco, formatear el número
+               e.target.value = precio ? precio.toLocaleString('es-CO') : '';
+             }}
+             placeholder="0"
+             required 
+             style={{width:'100%', padding:'10px 12px', border:'1px solid #eee', borderRadius:10}} 
+           />
+         </div>
       </div>
       <div style={{display:'flex', justifyContent:'flex-end', gap:8, marginTop:16}}>
         <button type="button" className="btn-ghost" onClick={onCancel}>Cancelar</button>
@@ -1037,10 +1112,29 @@ function PaymentForm({citas, initial, onSubmit, onCancel}:{citas:Cita[]; initial
             <option value="transferencia">Transferencia</option>
           </select>
         </div>
-        <div>
-          <label style={{fontSize:12,color:'#6b7280'}}>Monto (COP)</label>
-          <input type="number" min={0} value={monto} onChange={(e)=>setMonto(Number(e.target.value))} required style={{width:'100%', padding:'10px 12px', border:'1px solid #eee', borderRadius:10}} />
-        </div>
+                 <div>
+           <label style={{fontSize:12,color:'#6b7280'}}>Monto (COP)</label>
+           <input 
+             type="text" 
+             value={monto ? monto.toLocaleString('es-CO') : ''} 
+             onChange={(e)=>{
+               // Remover todos los caracteres no numéricos
+               const value = e.target.value.replace(/[^0-9]/g, '');
+               setMonto(value ? Number(value) : 0);
+             }}
+             onFocus={(e) => {
+               // Al hacer foco, mostrar el número sin formatear para facilitar la edición
+               e.target.value = monto.toString();
+             }}
+             onBlur={(e) => {
+               // Al perder el foco, formatear el número
+               e.target.value = monto ? monto.toLocaleString('es-CO') : '';
+             }}
+             placeholder="0"
+             required 
+             style={{width:'100%', padding:'10px 12px', border:'1px solid #eee', borderRadius:10}} 
+           />
+         </div>
         <div>
           <label style={{fontSize:12,color:'#6b7280'}}>Estado</label>
           <select value={estado} onChange={(e)=>setEstado(e.target.value as Pago['estado'])} style={{width:'100%', padding:'10px 12px', border:'1px solid #eee', borderRadius:10}}>

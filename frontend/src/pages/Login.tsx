@@ -21,9 +21,10 @@ export default function Login() {
       const data = await apiFetch('/auth/login', { method:'POST', body: JSON.stringify({ email, password }) })
       doLogin(data.token, data.user)
       if (data.user.rol === 'admin') navigate('/admin')
-      else navigate('/')
-    } catch (err:any) {
-      alert(err.message || 'Error al iniciar sesión')
+      else navigate('/dashboard')
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : 'Error al iniciar sesión'
+      alert(errorMessage)
     }
   }
   return (

@@ -183,41 +183,119 @@ router.delete('/citas/:id', authAdmin, async (req,res)=>{
 
 // Pagos
 router.get('/pagos', authAdmin, async (req,res)=>{
-  const q = String(req.query.q || '')
-  const [rows] = await db.query(
-    `SELECT pa.*, c.fecha_cita, u.nombre as cliente_nombre, p.nombre as paciente_nombre, s.nombre as servicio_nombre
-     FROM pagos pa
-     JOIN citas c ON pa.id_cita = c.id_cita
-     JOIN usuarios u ON c.id_usuario = u.id_usuario
-     JOIN pacientes p ON c.id_paciente = p.id_paciente
-     JOIN servicios s ON c.id_servicio = s.id_servicio
-     WHERE u.nombre LIKE ? OR p.nombre LIKE ? OR s.nombre LIKE ? OR pa.estado LIKE ? OR pa.metodo_pago LIKE ?
-     ORDER BY pa.id_pago ASC`, [like(q), like(q), like(q), like(q), like(q)])
-  res.json(rows)
+  try {
+    const q = String(req.query.q || '')
+    console.log('Obteniendo pagos con búsqueda:', q)
+    
+    const [rows] = await db.query(
+      `SELECT pa.*, c.fecha_cita, u.nombre as cliente_nombre, p.nombre as paciente_nombre, s.nombre as servicio_nombre
+       FROM pagos pa
+       JOIN citas c ON pa.id_cita = c.id_cita
+       JOIN usuarios u ON c.id_usuario = u.id_usuario
+       JOIN pacientes p ON c.id_paciente = p.id_paciente
+       JOIN servicios s ON c.id_servicio = s.id_servicio
+       WHERE u.nombre LIKE ? OR p.nombre LIKE ? OR s.nombre LIKE ? OR pa.estado LIKE ? OR pa.metodo_pago LIKE ?
+       ORDER BY pa.id_pago ASC`, [like(q), like(q), like(q), like(q), like(q)])
+    
+    console.log(`Pagos obtenidos: ${Array.isArray(rows) ? rows.length : 0}`)
+    res.json(rows)
+  } catch (error) {
+    console.error('Error al obtener pagos:', error)
+    res.status(500).json({message: 'Error interno del servidor', error: error.message})
+  }
 })
 
-const pagoSchema = z.object({ id_cita: z.number().int(), metodo_pago: z.enum(['tarjeta_credito','efectivo','transferencia']), monto: z.number().nonnegative(), fecha_pago: z.string(), estado: z.enum(['pendiente','pagado','fallido']) })
+const pagoSchema = z.object({ 
+  id_cita: z.union([z.number().int(), z.string().transform(val => Number(val))]), 
+  metodo_pago: z.enum(['tarjeta_credito','efectivo','transferencia']), 
+  monto: z.union([z.number().nonnegative(), z.string().transform(val => Number(val))]), 
+  fecha_pago: z.string().optional().transform(val => {
+    if (!val) return val;
+    // Convertir fecha ISO a formato MySQL compatible
+    return new Date(val).toISOString().slice(0, 19).replace('T', ' ');
+  }), 
+  estado: z.enum(['pendiente','pagado','fallido']) 
+})
 
 router.post('/pagos', authAdmin, async (req,res)=>{
-  const p = pagoSchema.safeParse(req.body)
-  if(!p.success) return res.status(400).json({errors:p.error.flatten()})
-  const {id_cita, metodo_pago, monto, fecha_pago, estado} = p.data
-  await db.query('INSERT INTO pagos (id_cita, metodo_pago, monto, fecha_pago, estado) VALUES (?,?,?,?,?)', [id_cita, metodo_pago, monto, fecha_pago, estado])
-  res.status(201).json({message:'Creado'})
+  try {
+    console.log('Datos recibidos para crear pago:', req.body)
+    const p = pagoSchema.safeParse(req.body)
+    if(!p.success) {
+      console.log('Error de validación:', p.error.flatten())
+      return res.status(400).json({errors:p.error.flatten()})
+    }
+    const {id_cita, metodo_pago, monto, fecha_pago, estado} = p.data
+    console.log('Datos validados:', {id_cita, metodo_pago, monto, fecha_pago, estado})
+    
+    // Verificar que la cita existe
+    const [citaCheck] = await db.query('SELECT id_cita FROM citas WHERE id_cita = ?', [id_cita])
+    if (!Array.isArray(citaCheck) || citaCheck.length === 0) {
+      return res.status(400).json({message: 'La cita especificada no existe'})
+    }
+    
+    console.log('Valores a insertar en MySQL:', {id_cita, metodo_pago, monto, fecha_pago, estado})
+    const result = await db.query('INSERT INTO pagos (id_cita, metodo_pago, monto, fecha_pago, estado) VALUES (?,?,?,?,?)', [id_cita, metodo_pago, monto, fecha_pago, estado])
+    console.log('Pago creado exitosamente:', result)
+    res.status(201).json({message:'Creado', id: result[0].insertId})
+  } catch (error) {
+    console.error('Error al crear pago:', error)
+    res.status(500).json({message: 'Error interno del servidor', error: error.message})
+  }
 })
 
 router.put('/pagos/:id', authAdmin, async (req,res)=>{
-  const id = Number(req.params.id)
-  const p = pagoSchema.partial().safeParse(req.body)
-  if(!p.success) return res.status(400).json({errors:p.error.flatten()})
-  await db.query('UPDATE pagos SET ? WHERE id_pago = ?', [p.data, id])
-  res.json({message:'Actualizado'})
+  try {
+    const id = Number(req.params.id)
+    console.log('Actualizando pago ID:', id, 'con datos:', req.body)
+    
+    const p = pagoSchema.partial().safeParse(req.body)
+    if(!p.success) {
+      console.log('Error de validación:', p.error.flatten())
+      return res.status(400).json({errors:p.error.flatten()})
+    }
+    
+    // Verificar que el pago existe
+    const [pagoCheck] = await db.query('SELECT id_pago FROM pagos WHERE id_pago = ?', [id])
+    if (!Array.isArray(pagoCheck) || pagoCheck.length === 0) {
+      return res.status(404).json({message: 'El pago especificado no existe'})
+    }
+    
+    // Si se está actualizando la cita, verificar que existe
+    if (p.data.id_cita) {
+      const [citaCheck] = await db.query('SELECT id_cita FROM citas WHERE id_cita = ?', [p.data.id_cita])
+      if (!Array.isArray(citaCheck) || citaCheck.length === 0) {
+        return res.status(400).json({message: 'La cita especificada no existe'})
+      }
+    }
+    
+    await db.query('UPDATE pagos SET ? WHERE id_pago = ?', [p.data, id])
+    console.log('Pago actualizado exitosamente')
+    res.json({message:'Actualizado'})
+  } catch (error) {
+    console.error('Error al actualizar pago:', error)
+    res.status(500).json({message: 'Error interno del servidor', error: error.message})
+  }
 })
 
 router.delete('/pagos/:id', authAdmin, async (req,res)=>{
-  const id = Number(req.params.id)
-  await db.query('DELETE FROM pagos WHERE id_pago = ?', [id])
-  res.json({message:'Eliminado'})
+  try {
+    const id = Number(req.params.id)
+    console.log('Eliminando pago ID:', id)
+    
+    // Verificar que el pago existe
+    const [pagoCheck] = await db.query('SELECT id_pago FROM pagos WHERE id_pago = ?', [id])
+    if (!Array.isArray(pagoCheck) || pagoCheck.length === 0) {
+      return res.status(404).json({message: 'El pago especificado no existe'})
+    }
+    
+    await db.query('DELETE FROM pagos WHERE id_pago = ?', [id])
+    console.log('Pago eliminado exitosamente')
+    res.json({message:'Eliminado'})
+  } catch (error) {
+    console.error('Error al eliminar pago:', error)
+    res.status(500).json({message: 'Error interno del servidor', error: error.message})
+  }
 })
 
 export default router
