@@ -326,8 +326,8 @@ export default function AddPetModal({ onClose, onAdd }: AddPetModalProps) {
         .form-group input:focus,
         .form-group select:focus {
           outline: none;
-          border-color: #f97316;
-          box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+          border-color: #2563eb;
+          box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
         .form-group input.error,
@@ -369,7 +369,7 @@ export default function AddPetModal({ onClose, onAdd }: AddPetModalProps) {
         }
 
         .btn-primary {
-          background: linear-gradient(135deg, #f97316, #ea580c);
+          background: linear-gradient(135deg, #2563eb, #1d4ed8);
           color: white;
           border: none;
           padding: 12px 24px;
@@ -381,7 +381,7 @@ export default function AddPetModal({ onClose, onAdd }: AddPetModalProps) {
 
         .btn-primary:hover:not(:disabled) {
           transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+          box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
 
         .btn-primary:disabled,

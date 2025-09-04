@@ -118,7 +118,7 @@ export default function PaymentsManagement({ userId, pacientes }: PaymentsManage
         borderRadius: 16,
         padding: 24,
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-        border: '2px solid #f0e7de',
+        border: '2px solid #e2e8f0',
         textAlign: 'center'
       }}>
         <div style={{ fontSize: 24, color: '#6b7280' }}>Cargando pagos...</div>
@@ -132,7 +132,7 @@ export default function PaymentsManagement({ userId, pacientes }: PaymentsManage
       borderRadius: 16,
       padding: 24,
       boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-      border: '2px solid #f0e7de'
+      border: '2px solid #e2e8f0'
     }}>
       {/* Header */}
       <div style={{
@@ -236,13 +236,13 @@ export default function PaymentsManagement({ userId, pacientes }: PaymentsManage
           <div style={{
             fontSize: 24,
             marginBottom: 8,
-            color: '#ea580c'
+            color: '#2563eb'
           }}>
             💰
           </div>
           <div style={{
             fontSize: 14,
-            color: '#ea580c',
+            color: '#2563eb',
             fontWeight: 500,
             marginBottom: 4
           }}>
@@ -251,7 +251,7 @@ export default function PaymentsManagement({ userId, pacientes }: PaymentsManage
           <div style={{
             fontSize: 24,
             fontWeight: 700,
-            color: '#ea580c'
+            color: '#2563eb'
           }}>
             {formatCurrency(totalGeneral)}
           </div>
@@ -275,7 +275,7 @@ export default function PaymentsManagement({ userId, pacientes }: PaymentsManage
               fontSize: 64, 
               marginBottom: 24, 
               opacity: 0.7,
-              color: '#f97316'
+              color: '#2563eb'
             }}>
               💳
             </div>
@@ -289,7 +289,7 @@ export default function PaymentsManagement({ userId, pacientes }: PaymentsManage
             </h3>
             <p style={{
               fontSize: 16,
-              color: '#f97316',
+              color: '#2563eb',
               lineHeight: 1.6,
               maxWidth: '500px',
               margin: '0 auto'
@@ -306,8 +306,8 @@ export default function PaymentsManagement({ userId, pacientes }: PaymentsManage
                   padding: '20px',
                   background: '#f9fafb',
                   borderRadius: 12,
-                  border: '1px solid #e5e7eb',
-                  borderLeft: '4px solid #f97316'
+                  border: '1px solid #e2e8f0',
+                  borderLeft: '4px solid #2563eb'
                 }}
               >
                 <div style={{

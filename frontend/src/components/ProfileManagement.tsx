@@ -110,7 +110,7 @@ export default function ProfileManagement({ userId, pacientes }: ProfileManageme
         borderRadius: 16,
         padding: 24,
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-        border: '2px solid #f0e7de',
+        border: '2px solid #e2e8f0',
         textAlign: 'center'
       }}>
         <div style={{ fontSize: 24, color: '#6b7280' }}>Cargando perfil...</div>
@@ -125,7 +125,7 @@ export default function ProfileManagement({ userId, pacientes }: ProfileManageme
         borderRadius: 16,
         padding: 24,
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-        border: '2px solid #f0e7de',
+        border: '2px solid #e2e8f0',
         textAlign: 'center'
       }}>
         <div style={{ fontSize: 24, color: '#6b7280' }}>Error al cargar el perfil</div>
@@ -139,7 +139,7 @@ export default function ProfileManagement({ userId, pacientes }: ProfileManageme
       borderRadius: 16,
       padding: 24,
       boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-      border: '2px solid #f0e7de'
+      border: '2px solid #e2e8f0'
     }}>
       {/* Header */}
       <div style={{
@@ -159,7 +159,7 @@ export default function ProfileManagement({ userId, pacientes }: ProfileManageme
         <button
           onClick={() => setShowEditModal(true)}
           style={{
-            background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+            background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
             color: 'white',
             border: 'none',
             borderRadius: 12,
@@ -214,9 +214,9 @@ export default function ProfileManagement({ userId, pacientes }: ProfileManageme
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div style={{
               padding: '16px 20px',
-              background: '#f9fafb',
+              background: '#f8fafc',
               borderRadius: 12,
-              border: '1px solid #e5e7eb'
+              border: '1px solid #e2e8f0'
             }}>
               <div style={{
                 display: 'flex',
@@ -244,9 +244,9 @@ export default function ProfileManagement({ userId, pacientes }: ProfileManageme
 
             <div style={{
               padding: '16px 20px',
-              background: '#f9fafb',
+              background: '#f8fafc',
               borderRadius: 12,
-              border: '1px solid #e5e7eb'
+              border: '1px solid #e2e8f0'
             }}>
               <div style={{
                 display: 'flex',
@@ -274,9 +274,9 @@ export default function ProfileManagement({ userId, pacientes }: ProfileManageme
 
             <div style={{
               padding: '16px 20px',
-              background: '#f9fafb',
+              background: '#f8fafc',
               borderRadius: 12,
-              border: '1px solid #e5e7eb'
+              border: '1px solid #e2e8f0'
             }}>
               <div style={{
                 display: 'flex',
@@ -307,9 +307,9 @@ export default function ProfileManagement({ userId, pacientes }: ProfileManageme
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             <div style={{
               padding: '16px 20px',
-              background: '#f9fafb',
+              background: '#f8fafc',
               borderRadius: 12,
-              border: '1px solid #e5e7eb'
+              border: '1px solid #e2e8f0'
             }}>
               <div style={{
                 display: 'flex',
@@ -345,9 +345,9 @@ export default function ProfileManagement({ userId, pacientes }: ProfileManageme
 
             <div style={{
               padding: '16px 20px',
-              background: '#f9fafb',
+              background: '#f8fafc',
               borderRadius: 12,
-              border: '1px solid #e5e7eb'
+              border: '1px solid #e2e8f0'
             }}>
               <div style={{
                 display: 'flex',
@@ -687,7 +687,7 @@ export default function ProfileManagement({ userId, pacientes }: ProfileManageme
                 <button
                   type="submit"
                   style={{
-                    background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+                    background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
                     color: 'white',
                     border: 'none',
                     padding: '12px 24px',

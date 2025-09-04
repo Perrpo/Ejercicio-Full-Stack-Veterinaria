@@ -5,18 +5,21 @@ html, body, #root {
 }
 
 :root {
-  --brand-orange: #f97316;
-  --brand-orange-600: #ea580c;
-  --brand-cream: #fff3e5;
-  --brand-cream-2: #fdf6ee;
+  --brand-primary: #2563eb;
+  --brand-primary-dark: #1d4ed8;
+  --brand-accent: #059669;
+  --brand-accent-light: #d1fae5;
+  --brand-background: #f8fafc;
+  --brand-background-light: #ffffff;
   --brand-text: #1f2937;
+  --brand-text-secondary: #6b7280;
 }
 
 body {
   margin: 0;
   font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
   color: var(--brand-text);
-  background-color: #fff;
+  background-color: var(--brand-background-light);
 }
 
 .container-app {
@@ -28,30 +31,30 @@ body {
 }
 
 .btn-primary {
-  background: var(--brand-orange);
+  background: var(--brand-primary);
   color: #fff;
   border-radius: 10px;
   padding: 10px 18px;
-  border: 1px solid var(--brand-orange);
-  box-shadow: 0 8px 30px rgba(249, 115, 22, 0.35);
+  border: 1px solid var(--brand-primary);
+  box-shadow: 0 8px 30px rgba(37, 99, 235, 0.35);
   transition: all 0.2s ease;
 }
 .btn-primary:hover {
-  background: var(--brand-orange-600);
-  border-color: var(--brand-orange-600);
+  background: var(--brand-primary-dark);
+  border-color: var(--brand-primary-dark);
 }
 
 .btn-ghost {
   background: transparent;
-  color: var(--brand-orange-600);
-  border: 1px solid #f0e7de;
+  color: var(--brand-primary-dark);
+  border: 1px solid #e2e8f0;
   padding: 10px 18px;
   border-radius: 10px;
 }
 
 .card {
-  background: #fff;
-  border: 1px solid #f0e7de;
+  background: var(--brand-background-light);
+  border: 1px solid #e2e8f0;
   border-radius: 16px;
   padding: 28px;
   box-shadow: 0 6px 20px rgba(0,0,0,0.04);
@@ -63,9 +66,9 @@ body {
   border-radius: 12px;
   display: grid;
   place-items: center;
-  background: var(--brand-cream);
-  color: var(--brand-orange-600);
-  border: 1px solid #f0e7de;
+  background: var(--brand-accent-light);
+  color: var(--brand-primary-dark);
+  border: 1px solid #e2e8f0;
 }
 
 .section {
@@ -74,10 +77,10 @@ body {
 }
 
 .section-muted {
-  background: var(--brand-cream-2);
+  background: var(--brand-background);
 }
 
 .gradient-cta {
-  background: linear-gradient(180deg, #ff7a28 0%, #f97316 40%, #ef6c00 100%);
+  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 40%, #1d4ed8 100%);
   color: white;
 }

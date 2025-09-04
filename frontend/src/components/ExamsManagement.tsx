@@ -137,7 +137,7 @@ export default function ExamsManagement({ userId, pacientes }: ExamsManagementPr
         borderRadius: 16,
         padding: 24,
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-        border: '2px solid #f0e7de',
+        border: '2px solid #e2e8f0',
         textAlign: 'center'
       }}>
         <div style={{ fontSize: 24, color: '#6b7280' }}>Cargando...</div>
@@ -153,7 +153,7 @@ export default function ExamsManagement({ userId, pacientes }: ExamsManagementPr
         borderRadius: 16,
         padding: 24,
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-        border: '2px solid #f0e7de'
+        border: '2px solid #e2e8f0'
       }}>
         {/* Header */}
         <div style={{
@@ -175,7 +175,7 @@ export default function ExamsManagement({ userId, pacientes }: ExamsManagementPr
           </div>
           <button
             style={{
-              background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+              background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
               color: 'white',
               border: 'none',
               borderRadius: 12,
@@ -208,7 +208,7 @@ export default function ExamsManagement({ userId, pacientes }: ExamsManagementPr
             fontSize: 64, 
             marginBottom: 24, 
             opacity: 0.7,
-            color: '#f97316'
+            color: '#2563eb'
           }}>
             📋
           </div>
@@ -222,7 +222,7 @@ export default function ExamsManagement({ userId, pacientes }: ExamsManagementPr
           </h3>
           <p style={{
             fontSize: 16,
-            color: '#f97316',
+            color: '#2563eb',
             lineHeight: 1.6,
             maxWidth: '500px',
             margin: '0 auto'
@@ -240,7 +240,7 @@ export default function ExamsManagement({ userId, pacientes }: ExamsManagementPr
       borderRadius: 16,
       padding: 24,
       boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-      border: '2px solid #f0e7de'
+      border: '2px solid #e2e8f0'
     }}>
       {/* Header */}
       <div style={{
@@ -263,7 +263,7 @@ export default function ExamsManagement({ userId, pacientes }: ExamsManagementPr
         <button
           onClick={() => setShowRequestModal(true)}
           style={{
-            background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+            background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
             color: 'white',
             border: 'none',
             borderRadius: 12,
@@ -545,7 +545,7 @@ export default function ExamsManagement({ userId, pacientes }: ExamsManagementPr
                 <button
                   type="submit"
                   style={{
-                    background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+                    background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
                     color: 'white',
                     border: 'none',
                     padding: '12px 24px',

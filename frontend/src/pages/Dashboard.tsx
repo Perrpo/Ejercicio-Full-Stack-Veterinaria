@@ -125,10 +125,10 @@ export default function Dashboard() {
               gap: 16
             }}>
               {[
-                { label: 'Mascotas', value: totalPacientes, icon: '🐾', color: '#10b981' },
-                { label: 'Citas Próximas', value: citasProximas, icon: '📅', color: '#3b82f6' },
-                { label: 'Exámenes Recientes', value: examenesRecientes, icon: '📋', color: '#8b5cf6' },
-                { label: 'Pagos Pendientes', value: pagosPendientes, icon: '⚠️', color: '#f59e0b' }
+                { label: 'Mascotas', value: totalPacientes, icon: '🐾', color: '#059669' },
+                { label: 'Citas Próximas', value: citasProximas, icon: '📅', color: '#2563eb' },
+                { label: 'Exámenes Recientes', value: examenesRecientes, icon: '📋', color: '#1d4ed8' },
+                { label: 'Pagos Pendientes', value: pagosPendientes, icon: '⚠️', color: '#dc2626' }
               ].map((card, index) => (
                 <div
                   key={index}
@@ -172,7 +172,7 @@ export default function Dashboard() {
               borderRadius: 16,
               padding: 24,
               boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-              border: '2px solid #f0e7de'
+              border: '2px solid #e2e8f0'
             }}>
               <div style={{
                 display: 'flex',
@@ -202,7 +202,7 @@ export default function Dashboard() {
               borderRadius: 16,
               padding: 24,
               boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-              border: '2px solid #f0e7de'
+              border: '2px solid #e2e8f0'
             }}>
               <div style={{
                 display: 'flex',
@@ -218,7 +218,7 @@ export default function Dashboard() {
                 </div>
                 <button
                   style={{
-                    background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+                    background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
                     color: 'white',
                     border: 'none',
                     borderRadius: 12,
@@ -253,7 +253,7 @@ export default function Dashboard() {
                   </div>
                   <button
                     style={{
-                      background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+                      background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
                       color: 'white',
                       border: 'none',
                       borderRadius: 12,
@@ -282,9 +282,9 @@ export default function Dashboard() {
                       key={index}
                       style={{
                         padding: '16px 20px',
-                        background: '#f9fafb',
+                        background: '#f8fafc',
                         borderRadius: 12,
-                        border: '1px solid #e5e7eb'
+                        border: '1px solid #e2e8f0'
                       }}
                     >
                       <div style={{
@@ -331,7 +331,7 @@ export default function Dashboard() {
               borderRadius: 16,
               padding: 24,
               boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-              border: '2px solid #f0e7de'
+              border: '2px solid #e2e8f0'
             }}>
               <div style={{
                 fontSize: 18,
@@ -358,10 +358,10 @@ export default function Dashboard() {
                     onClick={action.action}
                     style={{
                       background: action.primary 
-                        ? 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)'
+                        ? 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)'
                         : '#ffffff',
                       color: action.primary ? 'white' : '#6b7280',
-                      border: action.primary ? 'none' : '2px solid #e5e7eb',
+                      border: action.primary ? 'none' : '2px solid #e2e8f0',
                       borderRadius: 12,
                       padding: '16px 20px',
                       fontSize: 14,
@@ -378,8 +378,8 @@ export default function Dashboard() {
                         e.currentTarget.style.transform = 'translateY(-2px)'
                         e.currentTarget.style.boxShadow = '0 8px 25px rgba(249, 115, 22, 0.3)'
                       } else {
-                        e.currentTarget.style.background = '#f9fafb'
-                        e.currentTarget.style.borderColor = '#d1d5db'
+                        e.currentTarget.style.background = '#f8fafc'
+                        e.currentTarget.style.borderColor = '#cbd5e1'
                       }
                     }}
                     onMouseLeave={(e) => {
@@ -388,7 +388,7 @@ export default function Dashboard() {
                         e.currentTarget.style.boxShadow = 'none'
                       } else {
                         e.currentTarget.style.background = '#ffffff'
-                        e.currentTarget.style.borderColor = '#e5e7eb'
+                        e.currentTarget.style.borderColor = '#e2e8f0'
                       }
                     }}
                   >
@@ -431,7 +431,7 @@ export default function Dashboard() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, #fff3e5 0%, #fdf6ee 100%)'
+        background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
       }}>
         <div style={{ textAlign: 'center', color: '#6b7280' }}>
           <div style={{ fontSize: 24, marginBottom: 16 }}>Cargando...</div>
@@ -444,13 +444,13 @@ export default function Dashboard() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #fff3e5 0%, #fdf6ee 100%)'
+      background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)'
     }}>
       {/* Header */}
       <header style={{
-        background: 'linear-gradient(90deg, #ffffff 0%, #fff9f5 100%)',
-        borderBottom: '1px solid #f0e7de',
-        boxShadow: '0 2px 20px rgba(249, 115, 22, 0.08)'
+        background: 'linear-gradient(90deg, #ffffff 0%, #f8fafc 100%)',
+        borderBottom: '1px solid #e2e8f0',
+        boxShadow: '0 2px 20px rgba(37, 99, 235, 0.08)'
       }}>
         <div style={{
           maxWidth: '1200px',
@@ -465,7 +465,7 @@ export default function Dashboard() {
             <div style={{
               width: 32,
               height: 32,
-              background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+                                    background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
               borderRadius: '50%',
               display: 'flex',
               alignItems: 'center',
@@ -573,7 +573,7 @@ export default function Dashboard() {
                   alignItems: 'center',
                   gap: 12,
                   padding: '12px 16px',
-                  background: activeSection === item.key ? 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)' : 'transparent',
+                  background: activeSection === item.key ? 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)' : 'transparent',
                   color: activeSection === item.key ? 'white' : '#6b7280',
                   border: 'none',
                   borderRadius: 12,
@@ -586,8 +586,8 @@ export default function Dashboard() {
                 }}
                 onMouseEnter={(e) => {
                   if (activeSection !== item.key) {
-                    e.currentTarget.style.background = '#f9fafb'
-                    e.currentTarget.style.color = '#374151'
+                    e.currentTarget.style.background = '#f8fafc'
+                    e.currentTarget.style.color = '#1f2937'
                   }
                 }}
                 onMouseLeave={(e) => {

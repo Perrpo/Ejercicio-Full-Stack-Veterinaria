@@ -6,7 +6,7 @@ export default function Navbar() {
   const location = useLocation()
   
   return (
-    <header style={{background:'#ffffff',borderBottom:'1px solid #f1ebe4'}}> 
+    <header style={{background:'#ffffff',borderBottom:'1px solid #e2e8f0'}}> 
       <div className="container-app" style={{display:'flex',alignItems:'center',justifyContent:'space-between',height:64}}>
         <div style={{display:'flex',alignItems:'center',gap:8}}>
           <img src="/images/logo-mark.svg" alt="Logo VetCare" style={{width:24,height:24}} />

@@ -193,7 +193,7 @@ export default function PetsManagement({ userId }: PetsManagementProps) {
         }
 
         .btn-primary {
-          background: linear-gradient(135deg, #f97316, #ea580c);
+          background: linear-gradient(135deg, #2563eb, #1d4ed8);
           color: white;
           border: none;
           padding: 12px 24px;
@@ -205,7 +205,7 @@ export default function PetsManagement({ userId }: PetsManagementProps) {
 
         .btn-primary:hover {
           transform: translateY(-1px);
-          box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+          box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
 
         .loading-state {
@@ -218,7 +218,7 @@ export default function PetsManagement({ userId }: PetsManagementProps) {
           width: 32px;
           height: 32px;
           border: 3px solid #f3f4f6;
-          border-top: 3px solid #f97316;
+          border-top: 3px solid #2563eb;
           border-radius: 50%;
           animation: spin 1s linear infinite;
           margin: 0 auto 16px;
@@ -292,7 +292,7 @@ export default function PetsManagement({ userId }: PetsManagementProps) {
         .pet-card:hover {
           transform: translateY(-2px);
           box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-          border-color: #f97316;
+          border-color: #2563eb;
         }
 
         .pet-avatar {

@@ -76,8 +76,8 @@ function TopBar({tab, setTab}:{tab:TabKey; setTab:(t:TabKey)=>void}){
     }}>
       {tabs.map(t => (
         <button key={t.key} onClick={()=>setTab(t.key)} className="btn-ghost" style={{
-          borderColor: tab===t.key? 'rgba(249,115,22,0.6)':'#eee', 
-          background: tab===t.key? 'var(--brand-cream)':'#fff', 
+          borderColor: tab===t.key? 'rgba(37,99,235,0.6)':'#eee', 
+          background: tab===t.key? 'var(--brand-accent-light)':'#fff', 
           padding:'12px 20px', 
           borderRadius:20,
           fontSize:14,
@@ -126,11 +126,11 @@ function SearchBar({placeholder, value, onChange, onSubmit}:{placeholder:string;
             style={{
               width:'100%',
               padding:'14px 16px 14px 48px',
-              border:'2px solid #f0e7de',
+              border:'2px solid #e2e8f0',
               borderRadius:16,
               fontSize:16,
               background:'#ffffff',
-              boxShadow:'0 4px 20px rgba(249, 115, 22, 0.08)',
+              boxShadow:'0 4px 20px rgba(37, 99, 235, 0.08)',
               transition:'all 0.2s ease'
             }}
             onFocus={(e) => {
@@ -138,8 +138,8 @@ function SearchBar({placeholder, value, onChange, onSubmit}:{placeholder:string;
               e.target.style.boxShadow = '0 4px 20px rgba(249, 115, 22, 0.15)'
             }}
             onBlur={(e) => {
-              e.target.style.borderColor = '#f0e7de'
-              e.target.style.boxShadow = '0 4px 20px rgba(249, 115, 22, 0.08)'
+              e.target.style.borderColor = '#e2e8f0'
+              e.target.style.boxShadow = '0 4px 20px rgba(37, 99, 235, 0.08)'
             }}
           />
         </form>
@@ -154,9 +154,9 @@ function Section({title, children}:{title:string; children:React.ReactNode}){
       <div className="container-app">
         <div className="card" style={{
           padding: 18,
-          background: 'linear-gradient(135deg, #ffffff 0%, #fff9f5 100%)',
-          border: '1px solid #f0e7de',
-          boxShadow: '0 8px 32px rgba(249, 115, 22, 0.06)',
+          background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+          border: '1px solid #e2e8f0',
+          boxShadow: '0 8px 32px rgba(37, 99, 235, 0.06)',
           position: 'relative',
           overflow: 'hidden'
         }}>
@@ -183,7 +183,7 @@ function Table({headers, rows}:{headers:string[]; rows:React.ReactNode}){
         <thead>
           <tr>
             {headers.map((h,i)=> (
-              <th key={i} style={{textAlign:'left', padding:'12px 10px', borderBottom:'1px solid #f0e7de', fontSize:12, color:'#6b7280', background:'#faf6f0'}}>{h}</th>
+              <th key={i} style={{textAlign:'left', padding:'12px 10px', borderBottom:'1px solid #e2e8f0', fontSize:12, color:'#6b7280', background:'#f8fafc'}}>{h}</th>
             ))}
           </tr>
         </thead>
@@ -193,11 +193,11 @@ function Table({headers, rows}:{headers:string[]; rows:React.ReactNode}){
       </table>
       <style>
         {`
-          .admin-table th, .admin-table td { border-right: 1px solid #f0e7de; }
+          .admin-table th, .admin-table td { border-right: 1px solid #e2e8f0; }
           .admin-table th:last-child, .admin-table td:last-child { border-right: none; }
           .admin-table tbody tr { background: #ffffff; }
-          .admin-table tbody tr + tr td { border-top: 1px solid #f7efe6; }
-          .admin-table tbody tr:hover { background: #fffaf3; }
+          .admin-table tbody tr + tr td { border-top: 1px solid #e2e8f0; }
+          .admin-table tbody tr:hover { background: #f8fafc; }
         `}
       </style>
     </div>
@@ -207,8 +207,8 @@ function Table({headers, rows}:{headers:string[]; rows:React.ReactNode}){
 function RoleBadge({role}:{role:Usuario['rol']}){
   const styles: Record<Usuario['rol'], React.CSSProperties> = {
     admin: { background:'#fee2e2', color:'#b91c1c', border:'1px solid #fca5a5' },
-    veterinario: { background:'#eef2ff', color:'#1f2937', border:'1px solid #e5e7eb' },
-    cliente: { background:'#f3f4f6', color:'#6b7280', border:'1px solid #e5e7eb' },
+    veterinario: { background:'#eef2ff', color:'#1f2937', border:'1px solid #e2e8f0' },
+    cliente: { background:'#f3f4f6', color:'#6b7280', border:'1px solid #e2e8f0' },
   }
   return <span style={{...styles[role], padding:'4px 10px', borderRadius:999, fontSize:12}}>{role.charAt(0).toUpperCase()+role.slice(1)}</span>
 }
@@ -216,18 +216,18 @@ function RoleBadge({role}:{role:Usuario['rol']}){
 function SpecBadge({spec}:{spec:string}){
   const key = spec.toLowerCase()
   const styles: Record<string, React.CSSProperties> = {
-    perro: { background:'#eef2ff', color:'#111827', border:'1px solid #e5e7eb' },
-    gato: { background:'#f3f4f6', color:'#374151', border:'1px solid #e5e7eb' },
+    perro: { background:'#eef2ff', color:'#111827', border:'1px solid #e2e8f0' },
+    gato: { background:'#f3f4f6', color:'#374151', border:'1px solid #e2e8f0' },
     conejo:{ background:'#fef3c7', color:'#92400e', border:'1px solid #fde68a' },
     ave:   { background:'#fee2e2', color:'#991b1b', border:'1px solid #fecaca' },
   }
-  const style = styles[key] || { background:'#f3f4f6', color:'#6b7280', border:'1px solid #e5e7eb' }
+  const style = styles[key] || { background:'#f3f4f6', color:'#6b7280', border:'1px solid #e2e8f0' }
   return <span style={{...style, padding:'4px 10px', borderRadius:999, fontSize:12, textTransform:'capitalize'}}>{spec}</span>
 }
 
 function StatusBadge({status}:{status:Cita['estado']}){
   const styles: Record<Cita['estado'], React.CSSProperties> = {
-    pendiente: { background:'#f3f4f6', color:'#374151', border:'1px solid #e5e7eb' },
+    pendiente: { background:'#f3f4f6', color:'#374151', border:'1px solid #e2e8f0' },
     confirmada: { background:'#111827', color:'#ffffff', border:'1px solid #111827' },
     completada: { background:'#e7f8ef', color:'#065f46', border:'1px solid #a7f3d0' },
     cancelada: { background:'#fee2e2', color:'#b91c1c', border:'1px solid #fecaca' },
@@ -658,12 +658,12 @@ export default function Admin(){
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, #fff3e5 0%, #fdf6ee 25%, #fff9f5 50%, #fef7f0 75%, #fff3e5 100%)',
+      background: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 25%, #e2e8f0 50%, #cbd5e1 75%, #f8fafc 100%)',
       backgroundAttachment: 'fixed'
     }}>
       <header style={{
         background: 'linear-gradient(90deg, #ffffff 0%, #fff9f5 100%)',
-        borderBottom: '1px solid #f0e7de',
+        borderBottom: '1px solid #e2e8f0',
         boxShadow: '0 2px 20px rgba(249, 115, 22, 0.08)'
       }}> 
         <div className="container-app" style={{display:'flex',alignItems:'center',justifyContent:'space-between',height:64}}>

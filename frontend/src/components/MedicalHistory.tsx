@@ -225,7 +225,7 @@ export default function MedicalHistory({ userId, pacientes }: MedicalHistoryProp
         borderRadius: 16,
         padding: 24,
         boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-        border: '2px solid #f0e7de',
+        border: '2px solid #e2e8f0',
         textAlign: 'center'
       }}>
         <div style={{ fontSize: 24, color: '#6b7280' }}>Cargando historial médico...</div>
@@ -239,7 +239,7 @@ export default function MedicalHistory({ userId, pacientes }: MedicalHistoryProp
       borderRadius: 16,
       padding: 24,
       boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
-      border: '2px solid #f0e7de'
+      border: '2px solid #e2e8f0'
     }}>
       {/* Header */}
       <div style={{
@@ -266,7 +266,7 @@ export default function MedicalHistory({ userId, pacientes }: MedicalHistoryProp
         display: 'flex',
         gap: 4,
         marginBottom: 24,
-        background: '#f9fafb',
+        background: '#f8fafc',
         borderRadius: 8,
         padding: 4
       }}>
@@ -314,7 +314,7 @@ export default function MedicalHistory({ userId, pacientes }: MedicalHistoryProp
               style={{
                 width: '100%',
                 padding: '12px 16px 12px 40px',
-                border: '1px solid #d1d5db',
+                border: '1px solid #e2e8f0',
                 borderRadius: 8,
                 fontSize: 14,
                 background: 'white'
@@ -338,7 +338,7 @@ export default function MedicalHistory({ userId, pacientes }: MedicalHistoryProp
           onChange={(e) => setSelectedPaciente(Number(e.target.value))}
           style={{
             padding: '12px 16px',
-            border: '1px solid #d1d5db',
+            border: '1px solid #e2e8f0',
             borderRadius: 8,
             fontSize: 14,
             background: 'white',
@@ -358,7 +358,7 @@ export default function MedicalHistory({ userId, pacientes }: MedicalHistoryProp
           onChange={(e) => setSelectedTipo(e.target.value)}
           style={{
             padding: '12px 16px',
-            border: '1px solid #d1d5db',
+            border: '1px solid #e2e8f0',
             borderRadius: 8,
             fontSize: 14,
             background: 'white',
@@ -373,7 +373,7 @@ export default function MedicalHistory({ userId, pacientes }: MedicalHistoryProp
         <button
           onClick={exportHistorial}
           style={{
-            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+            background: 'linear-gradient(135deg, #059669 0%, #047857 100%)',
             color: 'white',
             border: 'none',
             borderRadius: 8,
@@ -409,7 +409,7 @@ export default function MedicalHistory({ userId, pacientes }: MedicalHistoryProp
                 fontSize: 64, 
                 marginBottom: 24, 
                 opacity: 0.7,
-                color: '#f97316'
+                color: '#2563eb'
               }}>
                 📄
               </div>
@@ -423,7 +423,7 @@ export default function MedicalHistory({ userId, pacientes }: MedicalHistoryProp
               </h3>
               <p style={{
                 fontSize: 16,
-                color: '#f97316',
+                color: '#2563eb',
                 lineHeight: 1.6,
                 maxWidth: '500px',
                 margin: '0 auto'
@@ -438,10 +438,10 @@ export default function MedicalHistory({ userId, pacientes }: MedicalHistoryProp
                   key={`${item.tipo}-${item.id}`}
                   style={{
                     padding: '20px',
-                    background: '#f9fafb',
+                    background: '#f8fafc',
                     borderRadius: 12,
                     border: '1px solid #e5e7eb',
-                    borderLeft: '4px solid #f97316'
+                    borderLeft: '4px solid #2563eb'
                   }}
                 >
                   <div style={{
@@ -521,7 +521,7 @@ export default function MedicalHistory({ userId, pacientes }: MedicalHistoryProp
                 fontSize: 64, 
                 marginBottom: 24, 
                 opacity: 0.7,
-                color: '#f97316'
+                color: '#2563eb'
               }}>
                 📊
               </div>
@@ -535,7 +535,7 @@ export default function MedicalHistory({ userId, pacientes }: MedicalHistoryProp
               </h3>
               <p style={{
                 fontSize: 16,
-                color: '#f97316',
+                color: '#2563eb',
                 lineHeight: 1.6,
                 maxWidth: '500px',
                 margin: '0 auto'
@@ -550,7 +550,7 @@ export default function MedicalHistory({ userId, pacientes }: MedicalHistoryProp
                   key={mascota}
                   style={{
                     padding: '20px',
-                    background: '#f9fafb',
+                    background: '#f8fafc',
                     borderRadius: 12,
                     border: '1px solid #e5e7eb'
                   }}
