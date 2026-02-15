@@ -589,11 +589,12 @@ export default function AppointmentBooking({ userId: _userId, pacientes }: Appoi
                     padding: '12px 24px',
                     borderRadius: 8,
                     fontWeight: 500,
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    opacity: isSubmitting ? 0.7 : 1
                   }}
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? 'Agendando...' : 'Agendar Cita'}
+                  {isSubmitting ? 'Agendando...' : 'Agendar'}
                 </button>
               </div>
             </form>
