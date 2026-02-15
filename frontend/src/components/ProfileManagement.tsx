@@ -11,7 +11,7 @@ interface Paciente {
 }
 
 interface PerfilUsuario {
-  id_usuario: number
+  id_usuario: string
   nombre: string
   apellido: string
   email: string
@@ -22,11 +22,11 @@ interface PerfilUsuario {
 }
 
 interface ProfileManagementProps {
-  userId: number
+  userId: string
   pacientes: Paciente[]
 }
 
-export default function ProfileManagement({ userId, pacientes }: ProfileManagementProps) {
+export default function ProfileManagement({ userId: _userId, pacientes: _pacientes }: ProfileManagementProps) {
   const [perfil, setPerfil] = useState<PerfilUsuario | null>(null)
   const [loading, setLoading] = useState(true)
   const [showEditModal, setShowEditModal] = useState(false)

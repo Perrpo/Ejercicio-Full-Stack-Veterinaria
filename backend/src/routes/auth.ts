@@ -1,32 +1,54 @@
 import { Router, Request, Response, NextFunction } from 'express'
 import { z } from 'zod'
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
-import { db } from '../server'
+import { supabaseAdmin, supabaseAnon } from '../supabase'
+import { supabaseForUser } from '../supabase'
 
 // Extender la interfaz Request para incluir el usuario
 declare global {
   namespace Express {
     interface Request {
       user?: any
+      supabase?: any
     }
   }
 }
 
-// Middleware para verificar token JWT
+// Middleware para verificar token (Supabase)
 export function authUser(req: Request, res: Response, next: NextFunction) {
-  try {
+  ;(async () => {
     const token = req.headers.authorization?.replace('Bearer ', '')
     if (!token) {
       return res.status(401).json({ message: 'Token no proporcionado' })
     }
-    
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as any
-    req.user = decoded
+
+    req.supabase = supabaseForUser(token)
+
+    const { data, error } = await supabaseAdmin.auth.getUser(token)
+    if (error || !data.user) {
+      return res.status(401).json({ message: 'Token inválido' })
+    }
+
+    const authUserId = data.user.id
+
+    const { data: perfil, error: perfilError } = await supabaseAdmin
+      .from('usuarios')
+      .select('id_usuario, rol, nombre, apellido')
+      .eq('id_usuario', authUserId)
+      .maybeSingle()
+
+    if (perfilError) {
+      return res.status(500).json({ message: 'Error al cargar perfil' })
+    }
+
+    if (!perfil) {
+      return res.status(403).json({ message: 'Perfil no encontrado' })
+    }
+
+    req.user = { sub: perfil.id_usuario, rol: perfil.rol, nombre: perfil.nombre, apellido: perfil.apellido }
     next()
-  } catch (error) {
+  })().catch(() => {
     return res.status(401).json({ message: 'Token inválido' })
-  }
+  })
 }
 
 const router = Router()
@@ -45,16 +67,51 @@ router.post('/register', async (req, res) => {
   if (!parsed.success) return res.status(400).json({ errors: parsed.error.flatten() })
   const { nombre, apellido, email, password, telefono, direccion } = parsed.data
   try {
-    const [exists] = await db.query('SELECT id_usuario FROM usuarios WHERE email = ?', [email]) as any
-    if (exists.length) return res.status(409).json({ message: 'Email ya registrado' })
-    const hash = await bcrypt.hash(password, 10)
-    await db.query(
-      'INSERT INTO usuarios (nombre, apellido, email, password, telefono, direccion, rol, fecha_registro) VALUES (?,?,?,?,?,?,"cliente", NOW())',
-      [nombre, apellido, email, hash, telefono, direccion]
-    )
+    const { data, error } = await supabaseAnon.auth.signUp({
+      email,
+      password,
+    })
+
+    if (error) {
+      console.error('Supabase signUp error:', error)
+      const msg = error.message || 'Error en registro'
+      if (msg.toLowerCase().includes('already') || msg.toLowerCase().includes('registered')) {
+        return res.status(409).json({ message: 'Email ya registrado' })
+      }
+      return res.status(500).json({ message: 'Error en registro', error: process.env.NODE_ENV === 'development' ? msg : undefined })
+    }
+
+    const user = data.user
+    if (!user) {
+      console.error('Supabase signUp returned no user:', data)
+      return res.status(500).json({ message: 'Error en registro', error: process.env.NODE_ENV === 'development' ? 'signUp returned no user' : undefined })
+    }
+
+    const { error: insertError } = await supabaseAdmin
+      .from('usuarios')
+      .insert({
+        id_usuario: user.id,
+        nombre,
+        apellido,
+        email,
+        telefono,
+        direccion,
+        rol: 'cliente',
+      })
+
+    if (insertError) {
+      console.error('Supabase insert usuarios error:', insertError)
+      return res.status(500).json({ message: 'Error en registro', error: process.env.NODE_ENV === 'development' ? insertError.message : undefined })
+    }
+
     res.status(201).json({ message: 'Usuario registrado' })
   } catch (e) {
-    res.status(500).json({ message: 'Error en registro' })
+    const err = e as any
+    console.error('Register unexpected error:', err)
+    res.status(500).json({
+      message: 'Error en registro',
+      error: process.env.NODE_ENV === 'development' ? (err?.message || String(err)) : undefined,
+    })
   }
 })
 
@@ -65,15 +122,42 @@ router.post('/login', async (req, res) => {
   if (!parsed.success) return res.status(400).json({ errors: parsed.error.flatten() })
   const { email, password } = parsed.data
   try {
-    const [rows] = await db.query('SELECT * FROM usuarios WHERE email = ?', [email]) as any
-    if (!rows.length) return res.status(401).json({ message: 'Credenciales inválidas' })
-    const user = rows[0]
-    const ok = await bcrypt.compare(password, user.password)
-    if (!ok) return res.status(401).json({ message: 'Credenciales inválidas' })
-    const token = jwt.sign({ sub: user.id_usuario, rol: user.rol }, process.env.JWT_SECRET || 'secret', { expiresIn: '8h' })
-    res.json({ token, user: { id: user.id_usuario, nombre: user.nombre, apellido: user.apellido, rol: user.rol } })
+    const { data, error } = await supabaseAnon.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    if (error || !data.session || !data.user) {
+      return res.status(401).json({ message: 'Credenciales inválidas' })
+    }
+
+    const token = data.session.access_token
+
+    const { data: perfiles, error: perfilError } = await supabaseAdmin
+      .from('usuarios')
+      .select('id_usuario, nombre, apellido, rol')
+      .eq('id_usuario', data.user.id)
+
+    if (perfilError) {
+      console.error('Login perfil lookup error:', perfilError)
+      return res.status(500).json({ message: 'Error en login', error: process.env.NODE_ENV === 'development' ? perfilError.message : undefined })
+    }
+
+    if (!perfiles || perfiles.length === 0) {
+      console.error('Login perfil no encontrado para user.id:', data.user.id)
+      return res.status(500).json({ message: 'Error en login', error: process.env.NODE_ENV === 'development' ? 'perfil no encontrado' : undefined })
+    }
+
+    const perfil = perfiles[0] // Tomar el primer resultado
+
+    res.json({ token, user: { id: perfil.id_usuario, nombre: perfil.nombre, apellido: perfil.apellido, rol: perfil.rol } })
   } catch (e) {
-    res.status(500).json({ message: 'Error en login' })
+    const err = e as any
+    console.error('Login unexpected error:', err)
+    res.status(500).json({
+      message: 'Error en login',
+      error: process.env.NODE_ENV === 'development' ? (err?.message || String(err)) : undefined,
+    })
   }
 })
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { apiFetch } from '../api/client'
 
 interface Paciente {
@@ -22,11 +22,11 @@ interface Examen {
 }
 
 interface ExamsManagementProps {
-  userId: number
+  userId: string
   pacientes: Paciente[]
 }
 
-export default function ExamsManagement({ userId, pacientes }: ExamsManagementProps) {
+export default function ExamsManagement({ userId: _userId, pacientes }: ExamsManagementProps) {
   const [examenes, setExamenes] = useState<Examen[]>([])
   const [loading, setLoading] = useState(true)
   const [showRequestModal, setShowRequestModal] = useState(false)

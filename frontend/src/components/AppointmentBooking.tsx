@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { apiFetch } from '../api/client'
 
 interface Paciente {
@@ -30,11 +30,11 @@ interface Cita {
 }
 
 interface AppointmentBookingProps {
-  userId: number
+  userId: string
   pacientes: Paciente[]
 }
 
-export default function AppointmentBooking({ userId, pacientes }: AppointmentBookingProps) {
+export default function AppointmentBooking({ userId: _userId, pacientes }: AppointmentBookingProps) {
   const [servicios, setServicios] = useState<Servicio[]>([])
   const [citas, setCitas] = useState<Cita[]>([])
   const [loading, setLoading] = useState(true)

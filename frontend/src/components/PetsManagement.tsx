@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { apiFetch } from '../api/client'
 import AddPetModal from './AddPetModal'
 
@@ -12,7 +12,7 @@ interface Pet {
 }
 
 interface PetsManagementProps {
-  userId: number
+  userId: string
 }
 
 export default function PetsManagement({ userId }: PetsManagementProps) {

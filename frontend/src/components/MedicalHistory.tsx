@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { apiFetch } from '../api/client'
 
 interface Paciente {
@@ -24,11 +24,11 @@ interface HistorialItem {
 }
 
 interface MedicalHistoryProps {
-  userId: number
+  userId: string
   pacientes: Paciente[]
 }
 
-export default function MedicalHistory({ userId, pacientes }: MedicalHistoryProps) {
+export default function MedicalHistory({ userId: _userId, pacientes }: MedicalHistoryProps) {
   const [historial, setHistorial] = useState<HistorialItem[]>([])
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'timeline' | 'summary'>('timeline')
@@ -428,20 +428,20 @@ export default function MedicalHistory({ userId, pacientes }: MedicalHistoryProp
                 maxWidth: '500px',
                 margin: '0 auto'
               }}>
-                Aún no tienes historial médico. Los registros aparecerán aquí después de las citas y exámenes.
+                No hay historial que coincida con los filtros seleccionados.
               </p>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {filteredHistorial.map((item, index) => (
+              {filteredHistorial.map((item) => (
                 <div
                   key={`${item.tipo}-${item.id}`}
                   style={{
                     padding: '20px',
-                    background: '#f8fafc',
+                    background: '#ffffff',
                     borderRadius: 12,
                     border: '1px solid #e5e7eb',
-                    borderLeft: '4px solid #2563eb'
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
                   }}
                 >
                   <div style={{

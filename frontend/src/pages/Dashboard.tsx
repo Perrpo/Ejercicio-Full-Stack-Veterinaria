@@ -402,22 +402,22 @@ export default function Dashboard() {
         )
       
       case 'mascotas':
-        return <PetsManagement userId={user?.id || 0} />
+        return <PetsManagement userId={user?.id || ''} />
       
       case 'citas':
-        return <AppointmentBooking userId={user?.id || 0} pacientes={pacientes} />
+        return <AppointmentBooking userId={user?.id || ''} pacientes={pacientes} />
       
       case 'examenes':
-        return <ExamsManagement userId={user?.id || 0} pacientes={pacientes} />
+        return <ExamsManagement userId={user?.id || ''} pacientes={pacientes} />
       
       case 'historial':
-        return <MedicalHistory userId={user?.id || 0} pacientes={pacientes} />
+        return <MedicalHistory userId={user?.id || ''} pacientes={pacientes} />
       
       case 'pagos':
-        return <PaymentsManagement userId={user?.id || 0} pacientes={pacientes} />
+        return <PaymentsManagement userId={user?.id || ''} pacientes={pacientes} />
       
       case 'perfil':
-        return <ProfileManagement userId={user?.id || 0} pacientes={pacientes} />
+        return <ProfileManagement userId={user?.id || ''} pacientes={pacientes} />
       
       default:
         return null

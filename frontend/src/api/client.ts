@@ -21,7 +21,7 @@ export async function apiFetch(path: string, options: RequestInit = {}) {
       let errorData = null;
       try { 
         errorData = await res.json(); 
-        msg = errorData.message || JSON.stringify(errorData); 
+        msg = errorData.error || errorData.message || JSON.stringify(errorData); 
       } catch (e) {
         console.log('No se pudo parsear la respuesta de error como JSON');
       }

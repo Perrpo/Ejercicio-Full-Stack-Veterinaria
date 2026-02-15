@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom'
 type TabKey = 'usuarios'|'pacientes'|'servicios'|'citas'|'pagos'
 
 type Usuario = {
-  id_usuario: number
+  id_usuario: string
   nombre: string
   apellido: string
   email: string
@@ -18,7 +18,7 @@ type Usuario = {
 
 type Paciente = {
   id_paciente: number
-  id_usuario: number
+  id_usuario: string
   nombre: string
   especie: string
   raza: string
@@ -35,7 +35,7 @@ type Servicio = {
 
 type Cita = {
   id_cita: number
-  id_usuario: number
+  id_usuario: string
   id_paciente: number
   id_servicio: number
   fecha_cita: string
@@ -861,7 +861,7 @@ export default function Admin(){
 }
 
 function PatientForm({owners, initial, onSubmit, onCancel}:{owners:Usuario[]; initial?:Partial<Paciente>; onSubmit:(p:Partial<Paciente>)=>void; onCancel:()=>void}){
-  const [id_usuario, setOwner] = useState<number>(initial?.id_usuario || (owners[0]?.id_usuario||0))
+  const [id_usuario, setOwner] = useState<string>(initial?.id_usuario || (owners[0]?.id_usuario||''))
   const [nombre, setNombre] = useState(initial?.nombre||'')
   const [especie, setEspecie] = useState(initial?.especie||'Perro')
   const [raza, setRaza] = useState(initial?.raza||'')
@@ -872,7 +872,7 @@ function PatientForm({owners, initial, onSubmit, onCancel}:{owners:Usuario[]; in
       <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
         <div>
           <label style={{fontSize:12,color:'#6b7280'}}>Propietario</label>
-          <select value={id_usuario} onChange={(e)=>setOwner(Number(e.target.value))} style={{width:'100%', padding:'10px 12px', border:'1px solid #eee', borderRadius:10}}>
+          <select value={id_usuario} onChange={(e)=>setOwner(e.target.value)} style={{width:'100%', padding:'10px 12px', border:'1px solid #eee', borderRadius:10}}>
             {owners.map(o => (
               <option key={o.id_usuario} value={o.id_usuario}>{o.nombre} {o.apellido}</option>
             ))}
@@ -992,7 +992,7 @@ function ServiceForm({initial, onSubmit, onCancel}:{initial?:Partial<Servicio>; 
 }
 
 function CitaForm({owners, patients, services, initial, onSubmit, onCancel}:{owners:Usuario[]; patients:Paciente[]; services:Servicio[]; initial?:Partial<Cita>; onSubmit:(c:Partial<Cita>)=>void; onCancel:()=>void}){
-  const [id_usuario, setUser] = useState<number>(initial?.id_usuario || (owners[0]?.id_usuario||0))
+  const [id_usuario, setUser] = useState<string>(initial?.id_usuario || (owners[0]?.id_usuario||''))
   const [id_paciente, setPatient] = useState<number>(initial?.id_paciente || (patients[0]?.id_paciente||0))
   const [id_servicio, setService] = useState<number>(initial?.id_servicio || (services[0]?.id_servicio||0))
   const [fecha_cita, setFecha] = useState(initial?.fecha_cita ? initial!.fecha_cita.substring(0,16) : '')
@@ -1002,7 +1002,7 @@ function CitaForm({owners, patients, services, initial, onSubmit, onCancel}:{own
       <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:12}}>
         <div>
           <label style={{fontSize:12,color:'#6b7280'}}>Cliente</label>
-          <select value={id_usuario} onChange={(e)=>setUser(Number(e.target.value))} style={{width:'100%', padding:'10px 12px', border:'1px solid #eee', borderRadius:10}}>
+          <select value={id_usuario} onChange={(e)=>setUser(e.target.value)} style={{width:'100%', padding:'10px 12px', border:'1px solid #eee', borderRadius:10}}>
             {owners.map(o => (
               <option key={o.id_usuario} value={o.id_usuario}>{o.nombre} {o.apellido}</option>
             ))}

@@ -1,36 +1,33 @@
 import { Router } from 'express'
-import { db } from '../server'
-import jwt from 'jsonwebtoken'
 import { z } from 'zod'
+import { authUser } from './auth'
+import { supabaseAdmin } from '../supabase'
 
 const router = Router()
 
 function authAdmin(req: any, res: any, next: any) {
-  const header = req.headers.authorization
-  if (!header) return res.status(401).json({ message: 'No autorizado' })
-  const token = header.replace('Bearer ', '')
-  try {
-    const payload: any = jwt.verify(token, process.env.JWT_SECRET || 'secret')
-    if (payload.rol !== 'admin') return res.status(403).json({ message: 'Requiere rol admin' })
-    req.user = payload
-    next()
-  } catch {
-    return res.status(401).json({ message: 'Token inválido' })
-  }
+  if (req.user?.rol !== 'admin') return res.status(403).json({ message: 'Requiere rol admin' })
+  next()
 }
 
 // Utilidad para LIKE búsquedas
 const like = (q?: string) => `%${(q || '').trim()}%`
 
 // Usuarios CRUD + búsqueda
-router.get('/usuarios', authAdmin, async (req, res) => {
-  const q = String(req.query.q || '')
-  const [rows] = await db.query(
-    `SELECT id_usuario, nombre, apellido, email, telefono, direccion, rol, fecha_registro
-     FROM usuarios 
-     WHERE nombre LIKE ? OR apellido LIKE ? OR email LIKE ? OR telefono LIKE ?
-     ORDER BY id_usuario ASC`, [like(q), like(q), like(q), like(q)])
-  res.json(rows)
+router.get('/usuarios', authUser, authAdmin, async (req, res) => {
+  const q = String(req.query.q || '').trim()
+
+  const query = supabaseAdmin
+    .from('usuarios')
+    .select('id_usuario, nombre, apellido, email, telefono, direccion, rol, fecha_registro')
+    .order('fecha_registro', { ascending: false })
+
+  const { data, error } = q
+    ? await query.or(`nombre.ilike.${like(q)},apellido.ilike.${like(q)},email.ilike.${like(q)},telefono.ilike.${like(q)}`)
+    : await query
+
+  if (error) return res.status(500).json({ message: 'Error interno del servidor' })
+  res.json(data || [])
 })
 
 const userSchema = z.object({
@@ -42,41 +39,73 @@ const userSchema = z.object({
   rol: z.enum(['cliente','veterinario','admin'])
 })
 
-router.post('/usuarios', authAdmin, async (req, res) => {
+router.post('/usuarios', authUser, authAdmin, async (req, res) => {
   const p = userSchema.safeParse(req.body)
   if(!p.success) return res.status(400).json({errors:p.error.flatten()})
   const {nombre, apellido, email, telefono, direccion, rol} = p.data
-  await db.query('INSERT INTO usuarios (nombre, apellido, email, password, telefono, direccion, rol, fecha_registro) VALUES (?,?,?,?,?,?,?, NOW())', [nombre, apellido, email, '', telefono, direccion, rol])
+
+  const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
+    email,
+    password: Math.random().toString(36).slice(2) + 'A1!a',
+    email_confirm: true,
+  })
+  if (authError || !authData.user) return res.status(500).json({ message: 'Error interno del servidor' })
+
+  const { error: insertError } = await supabaseAdmin.from('usuarios').insert({
+    id_usuario: authData.user.id,
+    nombre,
+    apellido,
+    email,
+    telefono,
+    direccion,
+    rol,
+  })
+  if (insertError) return res.status(500).json({ message: 'Error interno del servidor' })
+
   res.status(201).json({message:'Creado'})
 })
 
-router.put('/usuarios/:id', authAdmin, async (req, res) => {
-  const id = Number(req.params.id)
+router.put('/usuarios/:id', authUser, authAdmin, async (req, res) => {
+  const id = String(req.params.id)
   const p = userSchema.partial({email:true, rol:true}).safeParse(req.body)
   if(!p.success) return res.status(400).json({errors:p.error.flatten()})
-  await db.query('UPDATE usuarios SET ? WHERE id_usuario = ?', [p.data, id])
+  const { error } = await supabaseAdmin.from('usuarios').update(p.data).eq('id_usuario', id)
+  if (error) return res.status(500).json({ message: 'Error interno del servidor' })
   res.json({message:'Actualizado'})
 })
 
-router.delete('/usuarios/:id', authAdmin, async (req,res)=>{
-  const id = Number(req.params.id)
-  await db.query('DELETE FROM usuarios WHERE id_usuario = ?', [id])
+router.delete('/usuarios/:id', authUser, authAdmin, async (req,res)=>{
+  const id = String(req.params.id)
+  await supabaseAdmin.auth.admin.deleteUser(id).catch(() => null)
+  const { error } = await supabaseAdmin.from('usuarios').delete().eq('id_usuario', id)
+  if (error) return res.status(500).json({ message: 'Error interno del servidor' })
   res.json({message:'Eliminado'})
 })
 
 // Pacientes
-router.get('/pacientes', authAdmin, async (req,res)=>{
-  const q = String(req.query.q || '')
-  const [rows] = await db.query(
-    `SELECT p.*, u.nombre as propietario_nombre, u.apellido as propietario_apellido
-     FROM pacientes p JOIN usuarios u ON p.id_usuario = u.id_usuario
-     WHERE p.nombre LIKE ? OR p.especie LIKE ? OR p.raza LIKE ? OR u.nombre LIKE ? OR u.apellido LIKE ?
-     ORDER BY p.id_paciente ASC`, [like(q), like(q), like(q), like(q), like(q)])
+router.get('/pacientes', authUser, authAdmin, async (req,res)=>{
+  const q = String(req.query.q || '').trim()
+  const query = supabaseAdmin
+    .from('pacientes')
+    .select('id_paciente, id_usuario, nombre, especie, raza, edad, peso, usuarios(nombre, apellido)')
+    .order('id_paciente', { ascending: true })
+
+  const { data, error } = q
+    ? await query.or(`nombre.ilike.${like(q)},especie.ilike.${like(q)},raza.ilike.${like(q)}`)
+    : await query
+
+  if (error) return res.status(500).json({ message: 'Error interno del servidor' })
+
+  const rows = (data || []).map((r: any) => ({
+    ...r,
+    propietario_nombre: r.usuarios?.nombre,
+    propietario_apellido: r.usuarios?.apellido,
+  }))
   res.json(rows)
 })
 
 const pacienteSchema = z.object({
-  id_usuario: z.number().int(),
+  id_usuario: z.string().uuid(),
   nombre: z.string().min(1),
   especie: z.string().min(1),
   raza: z.string().min(1),
@@ -84,124 +113,158 @@ const pacienteSchema = z.object({
   peso: z.number().nonnegative(),
 })
 
-router.post('/pacientes', authAdmin, async (req,res)=>{
+router.post('/pacientes', authUser, authAdmin, async (req,res)=>{
   const p = pacienteSchema.safeParse(req.body)
   if(!p.success) return res.status(400).json({errors:p.error.flatten()})
   const {id_usuario, nombre, especie, raza, edad, peso} = p.data
-  await db.query('INSERT INTO pacientes (id_usuario, nombre, especie, raza, edad, peso) VALUES (?,?,?,?,?,?)', [id_usuario, nombre, especie, raza, edad, peso])
+  const { error } = await supabaseAdmin.from('pacientes').insert({ id_usuario, nombre, especie, raza, edad, peso })
+  if (error) return res.status(500).json({ message: 'Error interno del servidor' })
   res.status(201).json({message:'Creado'})
 })
 
-router.put('/pacientes/:id', authAdmin, async (req,res)=>{
+router.put('/pacientes/:id', authUser, authAdmin, async (req,res)=>{
   const id = Number(req.params.id)
   const p = pacienteSchema.partial({id_usuario:true}).safeParse(req.body)
   if(!p.success) return res.status(400).json({errors:p.error.flatten()})
-  await db.query('UPDATE pacientes SET ? WHERE id_paciente = ?', [p.data, id])
+  const { error } = await supabaseAdmin.from('pacientes').update(p.data).eq('id_paciente', id)
+  if (error) return res.status(500).json({ message: 'Error interno del servidor' })
   res.json({message:'Actualizado'})
 })
 
-router.delete('/pacientes/:id', authAdmin, async (req,res)=>{
+router.delete('/pacientes/:id', authUser, authAdmin, async (req,res)=>{
   const id = Number(req.params.id)
-  await db.query('DELETE FROM pacientes WHERE id_paciente = ?', [id])
+  const { error } = await supabaseAdmin.from('pacientes').delete().eq('id_paciente', id)
+  if (error) return res.status(500).json({ message: 'Error interno del servidor' })
   res.json({message:'Eliminado'})
 })
 
 // Servicios
-router.get('/servicios', authAdmin, async (req,res)=>{
-  const q = String(req.query.q || '')
-  const [rows] = await db.query('SELECT * FROM servicios WHERE nombre LIKE ? OR descripcion LIKE ? ORDER BY id_servicio ASC', [like(q), like(q)])
-  res.json(rows)
+router.get('/servicios', authUser, authAdmin, async (req,res)=>{
+  const q = String(req.query.q || '').trim()
+  const query = supabaseAdmin.from('servicios').select('*').order('id_servicio', { ascending: true })
+  const { data, error } = q
+    ? await query.or(`nombre.ilike.${like(q)},descripcion.ilike.${like(q)}`)
+    : await query
+  if (error) return res.status(500).json({ message: 'Error interno del servidor' })
+  res.json(data || [])
 })
 
 const servicioSchema = z.object({ nombre: z.string().min(1), descripcion: z.string().min(1), precio: z.number().nonnegative() })
 
-router.post('/servicios', authAdmin, async (req,res)=>{
+router.post('/servicios', authUser, authAdmin, async (req,res)=>{
   const p = servicioSchema.safeParse(req.body)
   if(!p.success) return res.status(400).json({errors:p.error.flatten()})
   const {nombre, descripcion, precio} = p.data
-  await db.query('INSERT INTO servicios (nombre, descripcion, precio) VALUES (?,?,?)', [nombre, descripcion, precio])
+  const { error } = await supabaseAdmin.from('servicios').insert({ nombre, descripcion, precio })
+  if (error) return res.status(500).json({ message: 'Error interno del servidor' })
   res.status(201).json({message:'Creado'})
 })
 
-router.put('/servicios/:id', authAdmin, async (req,res)=>{
+router.put('/servicios/:id', authUser, authAdmin, async (req,res)=>{
   const id = Number(req.params.id)
   const p = servicioSchema.partial().safeParse(req.body)
   if(!p.success) return res.status(400).json({errors:p.error.flatten()})
-  await db.query('UPDATE servicios SET ? WHERE id_servicio = ?', [p.data, id])
+  const { error } = await supabaseAdmin.from('servicios').update(p.data).eq('id_servicio', id)
+  if (error) return res.status(500).json({ message: 'Error interno del servidor' })
   res.json({message:'Actualizado'})
 })
 
-router.delete('/servicios/:id', authAdmin, async (req,res)=>{
+router.delete('/servicios/:id', authUser, authAdmin, async (req,res)=>{
   const id = Number(req.params.id)
-  await db.query('DELETE FROM servicios WHERE id_servicio = ?', [id])
+  const { error } = await supabaseAdmin.from('servicios').delete().eq('id_servicio', id)
+  if (error) return res.status(500).json({ message: 'Error interno del servidor' })
   res.json({message:'Eliminado'})
 })
 
 // Citas
-router.get('/citas', authAdmin, async (req,res)=>{
-  const q = String(req.query.q || '')
-  const [rows] = await db.query(
-    `SELECT c.*, u.nombre as cliente_nombre, u.apellido as cliente_apellido, p.nombre as paciente_nombre, s.nombre as servicio_nombre
-     FROM citas c 
-     JOIN usuarios u ON c.id_usuario = u.id_usuario
-     JOIN pacientes p ON c.id_paciente = p.id_paciente
-     JOIN servicios s ON c.id_servicio = s.id_servicio
-     WHERE u.nombre LIKE ? OR u.apellido LIKE ? OR p.nombre LIKE ? OR s.nombre LIKE ? OR c.estado LIKE ?
-     ORDER BY c.id_cita ASC`, [like(q), like(q), like(q), like(q), like(q)])
+router.get('/citas', authUser, authAdmin, async (req,res)=>{
+  const q = String(req.query.q || '').trim()
+  const query = supabaseAdmin
+    .from('citas')
+    .select('id_cita, id_usuario, id_paciente, id_servicio, fecha_cita, estado, usuarios(nombre, apellido), pacientes(nombre), servicios(nombre)')
+    .order('id_cita', { ascending: true })
+
+  const { data, error } = q
+    ? await query.or(`estado.ilike.${like(q)}`)
+    : await query
+
+  if (error) return res.status(500).json({ message: 'Error interno del servidor' })
+
+  const rows = (data || []).map((r: any) => ({
+    ...r,
+    cliente_nombre: r.usuarios?.nombre,
+    cliente_apellido: r.usuarios?.apellido,
+    paciente_nombre: r.pacientes?.nombre,
+    servicio_nombre: r.servicios?.nombre,
+  }))
   res.json(rows)
 })
 
 const citaSchema = z.object({
-  id_usuario: z.number().int(),
+  id_usuario: z.string().uuid(),
   id_paciente: z.number().int(),
   id_servicio: z.number().int(),
   fecha_cita: z.string(),
   estado: z.enum(['pendiente','confirmada','completada','cancelada'])
 })
 
-router.post('/citas', authAdmin, async (req,res)=>{
+router.post('/citas', authUser, authAdmin, async (req,res)=>{
   const p = citaSchema.safeParse(req.body)
   if(!p.success) return res.status(400).json({errors:p.error.flatten()})
   const {id_usuario, id_paciente, id_servicio, fecha_cita, estado} = p.data
-  await db.query('INSERT INTO citas (id_usuario, id_paciente, id_servicio, fecha_cita, estado) VALUES (?,?,?,?,?)', [id_usuario, id_paciente, id_servicio, fecha_cita, estado])
+  const { error } = await supabaseAdmin.from('citas').insert({ id_usuario, id_paciente, id_servicio, fecha_cita, estado })
+  if (error) return res.status(500).json({ message: 'Error interno del servidor' })
   res.status(201).json({message:'Creado'})
 })
 
-router.put('/citas/:id', authAdmin, async (req,res)=>{
+router.put('/citas/:id', authUser, authAdmin, async (req,res)=>{
   const id = Number(req.params.id)
   const p = citaSchema.partial({id_usuario:true, id_paciente:true, id_servicio:true}).safeParse(req.body)
   if(!p.success) return res.status(400).json({errors:p.error.flatten()})
-  await db.query('UPDATE citas SET ? WHERE id_cita = ?', [p.data, id])
+  const { error } = await supabaseAdmin.from('citas').update(p.data).eq('id_cita', id)
+  if (error) return res.status(500).json({ message: 'Error interno del servidor' })
   res.json({message:'Actualizado'})
 })
 
-router.delete('/citas/:id', authAdmin, async (req,res)=>{
+router.delete('/citas/:id', authUser, authAdmin, async (req,res)=>{
   const id = Number(req.params.id)
-  await db.query('DELETE FROM citas WHERE id_cita = ?', [id])
+  const { error } = await supabaseAdmin.from('citas').delete().eq('id_cita', id)
+  if (error) return res.status(500).json({ message: 'Error interno del servidor' })
   res.json({message:'Eliminado'})
 })
 
 // Pagos
-router.get('/pagos', authAdmin, async (req,res)=>{
+router.get('/pagos', authUser, authAdmin, async (req,res)=>{
   try {
     const q = String(req.query.q || '')
     console.log('Obteniendo pagos con búsqueda:', q)
-    
-    const [rows] = await db.query(
-      `SELECT pa.*, c.fecha_cita, u.nombre as cliente_nombre, p.nombre as paciente_nombre, s.nombre as servicio_nombre
-       FROM pagos pa
-       JOIN citas c ON pa.id_cita = c.id_cita
-       JOIN usuarios u ON c.id_usuario = u.id_usuario
-       JOIN pacientes p ON c.id_paciente = p.id_paciente
-       JOIN servicios s ON c.id_servicio = s.id_servicio
-       WHERE u.nombre LIKE ? OR p.nombre LIKE ? OR s.nombre LIKE ? OR pa.estado LIKE ? OR pa.metodo_pago LIKE ?
-       ORDER BY pa.id_pago ASC`, [like(q), like(q), like(q), like(q), like(q)])
-    
+
+    const { data, error } = await supabaseAdmin
+      .from('pagos')
+      .select('id_pago, id_cita, metodo_pago, monto, fecha_pago, estado, citas(fecha_cita, usuarios(nombre,apellido), pacientes(nombre), servicios(nombre))')
+      .order('id_pago', { ascending: true })
+
+    if (error) return res.status(500).json({message: 'Error interno del servidor'})
+
+    const rows = (data || []).map((r: any) => ({
+      id_pago: r.id_pago,
+      id_cita: r.id_cita,
+      metodo_pago: r.metodo_pago,
+      monto: r.monto,
+      fecha_pago: r.fecha_pago,
+      estado: r.estado,
+      fecha_cita: r.citas?.fecha_cita,
+      cliente_nombre: r.citas?.usuarios?.nombre,
+      paciente_nombre: r.citas?.pacientes?.nombre,
+      servicio_nombre: r.citas?.servicios?.nombre,
+    }))
+
     console.log(`Pagos obtenidos: ${Array.isArray(rows) ? rows.length : 0}`)
     res.json(rows)
   } catch (error) {
     console.error('Error al obtener pagos:', error)
-    res.status(500).json({message: 'Error interno del servidor', error: error.message})
+    const message = error instanceof Error ? error.message : 'Error interno'
+    res.status(500).json({message: 'Error interno del servidor', error: message})
   }
 })
 
@@ -217,7 +280,7 @@ const pagoSchema = z.object({
   estado: z.enum(['pendiente','pagado','fallido']) 
 })
 
-router.post('/pagos', authAdmin, async (req,res)=>{
+router.post('/pagos', authUser, authAdmin, async (req,res)=>{
   try {
     console.log('Datos recibidos para crear pago:', req.body)
     const p = pagoSchema.safeParse(req.body)
@@ -229,22 +292,27 @@ router.post('/pagos', authAdmin, async (req,res)=>{
     console.log('Datos validados:', {id_cita, metodo_pago, monto, fecha_pago, estado})
     
     // Verificar que la cita existe
-    const [citaCheck] = await db.query('SELECT id_cita FROM citas WHERE id_cita = ?', [id_cita])
-    if (!Array.isArray(citaCheck) || citaCheck.length === 0) {
+    const { data: citaCheck, error: citaError } = await supabaseAdmin.from('citas').select('id_cita').eq('id_cita', id_cita).maybeSingle()
+    if (citaError) {
+      return res.status(500).json({message: 'Error interno del servidor'})
+    }
+    if (!citaCheck) {
       return res.status(400).json({message: 'La cita especificada no existe'})
     }
     
-    console.log('Valores a insertar en MySQL:', {id_cita, metodo_pago, monto, fecha_pago, estado})
-    const result = await db.query('INSERT INTO pagos (id_cita, metodo_pago, monto, fecha_pago, estado) VALUES (?,?,?,?,?)', [id_cita, metodo_pago, monto, fecha_pago, estado])
-    console.log('Pago creado exitosamente:', result)
-    res.status(201).json({message:'Creado', id: result[0].insertId})
+    const insertPayload: any = { id_cita, metodo_pago, monto, estado }
+    if (fecha_pago) insertPayload.fecha_pago = fecha_pago
+    const { data: created, error } = await supabaseAdmin.from('pagos').insert(insertPayload).select('id_pago').single()
+    if (error) return res.status(500).json({message: 'Error interno del servidor'})
+    res.status(201).json({message:'Creado', id: created.id_pago})
   } catch (error) {
     console.error('Error al crear pago:', error)
-    res.status(500).json({message: 'Error interno del servidor', error: error.message})
+    const message = error instanceof Error ? error.message : 'Error interno'
+    res.status(500).json({message: 'Error interno del servidor', error: message})
   }
 })
 
-router.put('/pagos/:id', authAdmin, async (req,res)=>{
+router.put('/pagos/:id', authUser, authAdmin, async (req,res)=>{
   try {
     const id = Number(req.params.id)
     console.log('Actualizando pago ID:', id, 'con datos:', req.body)
@@ -256,45 +324,58 @@ router.put('/pagos/:id', authAdmin, async (req,res)=>{
     }
     
     // Verificar que el pago existe
-    const [pagoCheck] = await db.query('SELECT id_pago FROM pagos WHERE id_pago = ?', [id])
-    if (!Array.isArray(pagoCheck) || pagoCheck.length === 0) {
+    const { data: pagoCheck, error: pagoError } = await supabaseAdmin.from('pagos').select('id_pago').eq('id_pago', id).maybeSingle()
+    if (pagoError) {
+      return res.status(500).json({message: 'Error interno del servidor'})
+    }
+    if (!pagoCheck) {
       return res.status(404).json({message: 'El pago especificado no existe'})
     }
     
     // Si se está actualizando la cita, verificar que existe
     if (p.data.id_cita) {
-      const [citaCheck] = await db.query('SELECT id_cita FROM citas WHERE id_cita = ?', [p.data.id_cita])
-      if (!Array.isArray(citaCheck) || citaCheck.length === 0) {
+      const { data: citaCheck, error: citaError } = await supabaseAdmin.from('citas').select('id_cita').eq('id_cita', p.data.id_cita).maybeSingle()
+      if (citaError) {
+        return res.status(500).json({message: 'Error interno del servidor'})
+      }
+      if (!citaCheck) {
         return res.status(400).json({message: 'La cita especificada no existe'})
       }
     }
     
-    await db.query('UPDATE pagos SET ? WHERE id_pago = ?', [p.data, id])
+    const { error } = await supabaseAdmin.from('pagos').update(p.data).eq('id_pago', id)
+    if (error) return res.status(500).json({message: 'Error interno del servidor'})
     console.log('Pago actualizado exitosamente')
     res.json({message:'Actualizado'})
   } catch (error) {
     console.error('Error al actualizar pago:', error)
-    res.status(500).json({message: 'Error interno del servidor', error: error.message})
+    const message = error instanceof Error ? error.message : 'Error interno'
+    res.status(500).json({message: 'Error interno del servidor', error: message})
   }
 })
 
-router.delete('/pagos/:id', authAdmin, async (req,res)=>{
+router.delete('/pagos/:id', authUser, authAdmin, async (req,res)=>{
   try {
     const id = Number(req.params.id)
     console.log('Eliminando pago ID:', id)
     
     // Verificar que el pago existe
-    const [pagoCheck] = await db.query('SELECT id_pago FROM pagos WHERE id_pago = ?', [id])
-    if (!Array.isArray(pagoCheck) || pagoCheck.length === 0) {
+    const { data: pagoCheck, error: pagoError } = await supabaseAdmin.from('pagos').select('id_pago').eq('id_pago', id).maybeSingle()
+    if (pagoError) {
+      return res.status(500).json({message: 'Error interno del servidor'})
+    }
+    if (!pagoCheck) {
       return res.status(404).json({message: 'El pago especificado no existe'})
     }
     
-    await db.query('DELETE FROM pagos WHERE id_pago = ?', [id])
+    const { error } = await supabaseAdmin.from('pagos').delete().eq('id_pago', id)
+    if (error) return res.status(500).json({message: 'Error interno del servidor'})
     console.log('Pago eliminado exitosamente')
     res.json({message:'Eliminado'})
   } catch (error) {
     console.error('Error al eliminar pago:', error)
-    res.status(500).json({message: 'Error interno del servidor', error: error.message})
+    const message = error instanceof Error ? error.message : 'Error interno'
+    res.status(500).json({message: 'Error interno del servidor', error: message})
   }
 })
 

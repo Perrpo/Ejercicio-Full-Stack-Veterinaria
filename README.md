@@ -1,8 +1,8 @@
-## VetCare - Sistema de Gestión Veterinaria
+VetCare - Sistema de Gestión Veterinaria
 
 Sistema completo de gestión veterinaria con frontend y backend integrados. Aplicación full-stack que permite a los clientes gestionar el cuidado de sus mascotas de manera integral.
 
-### Tecnologías
+Tecnologías
 - **Frontend**: React 19 + TypeScript + Vite
 - **Backend**: Node.js + Express + TypeScript
 - **Base de Datos**: MySQL
@@ -10,9 +10,9 @@ Sistema completo de gestión veterinaria con frontend y backend integrados. Apli
 - **Enrutamiento**: `react-router-dom`
 - **Estilos**: CSS utilitario con variables de color personalizadas
 
-### Funcionalidades Principales
+Funcionalidades Principales
 
-#### 🏠 **Dashboard del Cliente**
+**Dashboard del Cliente**
 - **Inicio**: Resumen general con estadísticas de mascotas, citas, exámenes y pagos
 - **Gestión de Mascotas**: Registro, edición y eliminación de mascotas
 - **Reserva de Citas**: Agendamiento de citas médicas con servicios disponibles
@@ -21,13 +21,13 @@ Sistema completo de gestión veterinaria con frontend y backend integrados. Apli
 - **Gestión de Pagos**: Seguimiento de pagos con estados y exportación
 - **Perfil de Usuario**: Edición de información personal y datos de contacto
 
-#### 🔐 **Sistema de Autenticación**
+**Sistema de Autenticación**
 - **Login**: Autenticación segura con JWT
 - **Registro**: Creación de cuentas de cliente
 - **Protección de rutas**: Acceso controlado a funcionalidades
 - **Gestión de sesiones**: Persistencia de sesión de usuario
 
-#### 🎨 **Diseño y UX**
+**Diseño y UX**
 - **Landing Page**: Página de inicio con información de servicios
 - **Interfaz moderna**: Diseño limpio con paleta de colores cálida
 - **Responsive**: Adaptable a diferentes dispositivos

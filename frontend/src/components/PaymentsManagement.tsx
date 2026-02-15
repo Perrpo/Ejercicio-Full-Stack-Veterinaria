@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { apiFetch } from '../api/client'
 
 interface Paciente {
@@ -23,11 +23,11 @@ interface Pago {
 }
 
 interface PaymentsManagementProps {
-  userId: number
+  userId: string
   pacientes: Paciente[]
 }
 
-export default function PaymentsManagement({ userId, pacientes }: PaymentsManagementProps) {
+export default function PaymentsManagement({ userId: _userId, pacientes: _pacientes }: PaymentsManagementProps) {
   const [pagos, setPagos] = useState<Pago[]>([])
   const [loading, setLoading] = useState(true)
 

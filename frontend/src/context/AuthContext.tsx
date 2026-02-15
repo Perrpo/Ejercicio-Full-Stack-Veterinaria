@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 
-type User = { id: number; nombre: string; apellido: string; rol: 'cliente'|'veterinario'|'admin' }
+type User = { id: string; nombre: string; apellido: string; rol: 'cliente'|'veterinario'|'admin' }
 
 type AuthContextType = {
   user: User | null
