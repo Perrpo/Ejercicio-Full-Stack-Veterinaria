@@ -10,9 +10,9 @@ app.get('/health', async (_req, res) => {
   res.json({ ok: true })
 })
 
-import authRouter from './routes/auth'
-import adminRouter from './routes/admin'
-import clientRouter from './routes/client'
+import authRouter from './routes/auth.routes'
+import adminRouter from './routes/admin.routes'
+import clientRouter from './routes/client.routes'
 
 app.use('/auth', authRouter)
 app.use('/admin', adminRouter)
