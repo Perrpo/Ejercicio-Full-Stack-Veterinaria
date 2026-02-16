@@ -24,5 +24,9 @@ router.post('/citas', authUser, authCliente, ClientController.createCita)
 // servicios
 router.get('/servicios', authUser, authCliente, ClientController.getServicios)
 
+// examenes
+router.get('/examenes', authUser, authCliente, ClientController.getExamenes)
+router.post('/examenes', authUser, authCliente, ClientController.createExamen)
+
 
 export default router

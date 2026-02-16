@@ -96,21 +96,49 @@ static async getCitas(req: Request, res: Response) {
   }
 
   static async getServicios(req: Request, res: Response) {
-    try {
-      const supabase = req.supabase!
+  const supabase = req.supabase!
+  
+  const { data: servicios, error } = await supabase
+    .from('servicios')
+    .select('id_servicio, nombre, precio')
+    .order('nombre', { ascending: true })
 
-      const { data, error } = await supabase
-        .from('servicios')
-        .select('*')
-        .order('nombre', { ascending: true })
-
-      if (error) {
-        return res.status(500).json({ message: 'Error al obtener servicios' })
-      }
-
-      res.json(data || [])
-    } catch (error) {
-      res.status(500).json({ message: 'Error interno del servidor' })
-    }
+  if (error) {
+    return res.status(500).json({ message: 'Error al obtener servicios' })
   }
+
+  const serviciosFormateados = (servicios || []).map((servicio: any) => ({
+    ...servicio,
+    precio_formateado: servicio.precio.toLocaleString('es-CO'),
+  }))
+
+  res.json(serviciosFormateados)
+}
+
+static async getExamenes(req: Request, res: Response) {
+  try {
+    const userId = req.user!.sub
+    const supabase = req.supabase!
+
+    const examenes = await ClientService.getExamenes(userId, supabase)
+    res.json(examenes)
+  } catch (error) {
+    res.status(400).json({ message: (error as Error).message })
+  }
+}
+
+static async createExamen(req: Request, res: Response) {
+  try {
+    const userId = req.user!.sub
+    const supabase = req.supabase!
+    const examenData = req.body
+
+    const examen = await ClientService.createExamen(userId, examenData, supabase)
+    res.status(201).json(examen)
+  } catch (error) {
+    res.status(400).json({ message: (error as Error).message })
+  }
+}
+
+
 }
