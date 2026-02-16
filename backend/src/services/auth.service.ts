@@ -1,7 +1,8 @@
+import { LoginDTO, RegisterDTO } from '../schemas/auth.schema'
 import { supabaseAdmin, supabaseAnon } from '../supabase'
 
 export class AuthService {
-  static async register(data: any) {
+  static async register(data: RegisterDTO) {
     const { nombre, apellido, email, password, telefono, direccion } = data
 
     const { data: signup, error } = await supabaseAnon.auth.signUp({
@@ -30,7 +31,7 @@ export class AuthService {
     }
   }
 
-  static async login(data: any) {
+  static async login(data: LoginDTO) {
     const { email, password } = data
 
     const { data: auth, error } =
