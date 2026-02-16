@@ -5,22 +5,24 @@ import { ClientController } from '../controllers/client.controller'
 
 const router = Router()
 
+//darshboard
 router.get('/dashboard', authUser, authCliente, ClientController.dashboard)
+
+//perfil
+router.get('/perfil', authUser, authCliente, ClientController.getProfile)
+router.put('/perfil', authUser, authCliente, ClientController.updateProfile)
+
+//mascotas
+router.get('/mascotas', authUser, authCliente, ClientController.getMascotas)
 router.post('/mascotas', authUser, authCliente, ClientController.createMascota)
-router.get(
-  '/perfil',
-  authUser,
-  authCliente,
-  ClientController.getProfile
-)
+router.delete('/mascotas/:id', authUser, authCliente, ClientController.deleteMascota)
 
-router.put(
-  '/perfil',
-  authUser,
-  authCliente,
-  ClientController.updateProfile
-)
+// citas
+router.get('/citas', authUser, authCliente, ClientController.getCitas)
+router.post('/citas', authUser, authCliente, ClientController.createCita)
 
+// servicios
+router.get('/servicios', authUser, authCliente, ClientController.getServicios)
 
 
 export default router

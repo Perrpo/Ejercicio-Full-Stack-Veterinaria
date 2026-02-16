@@ -32,13 +32,85 @@ export class ClientController {
   res.json(perfil)
 }
 
-static async updateProfile(req: Request, res: Response) {
+  static async updateProfile(req: Request, res: Response) {
+    const userId = req.user!.sub
+    const supabase = req.supabase!
+
+    await ClientService.updateProfile(userId, req.body, supabase)
+    res.json({ message: 'Perfil actualizado exitosamente' })
+  }
+
+  static async getMascotas(req: Request, res: Response) {
   const userId = req.user!.sub
   const supabase = req.supabase!
 
-  await ClientService.updateProfile(userId, req.body, supabase)
-  res.json({ message: 'Perfil actualizado exitosamente' })
+  const { data, error } = await supabase
+    .from('pacientes')
+    .select('*')
+    .eq('id_usuario', userId)
+
+  if (error) {
+    return res.status(500).json({ message: 'Error al cargar mascotas' })
+  }
+
+  res.json(data)
+  }
+
+  static async deleteMascota(req: Request, res: Response) {
+  try {
+    const userId = req.user!.sub
+    const petId = Number(req.params.id)
+    const supabase = req.supabase!
+
+    await ClientService.deleteMascota(userId, petId, supabase)
+
+    res.json({ message: 'Mascota eliminada exitosamente' })
+  } catch (error) {
+    res.status(400).json({ message: (error as Error).message })
+  }
 }
 
+static async getCitas(req: Request, res: Response) {
+    try {
+      const userId = req.user!.sub
+      const supabase = req.supabase!
 
+      const citas = await ClientService.getCitas(userId, supabase)
+      res.json(citas)
+    } catch (error) {
+      res.status(400).json({ message: (error as Error).message })
+    }
+  }
+
+  static async createCita(req: Request, res: Response) {
+    try {
+      const userId = req.user!.sub
+      const supabase = req.supabase!
+      const citaData = req.body
+
+      const cita = await ClientService.createCita(userId, citaData, supabase)
+      res.status(201).json(cita)
+    } catch (error) {
+      res.status(400).json({ message: (error as Error).message })
+    }
+  }
+
+  static async getServicios(req: Request, res: Response) {
+    try {
+      const supabase = req.supabase!
+
+      const { data, error } = await supabase
+        .from('servicios')
+        .select('*')
+        .order('nombre', { ascending: true })
+
+      if (error) {
+        return res.status(500).json({ message: 'Error al obtener servicios' })
+      }
+
+      res.json(data || [])
+    } catch (error) {
+      res.status(500).json({ message: 'Error interno del servidor' })
+    }
+  }
 }
