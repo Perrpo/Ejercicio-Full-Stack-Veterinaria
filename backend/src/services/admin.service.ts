@@ -5,6 +5,9 @@ const like = (q?: string) => `%${(q || '').trim()}%`
 
 export class AdminService {
 
+  // ======================
+  // usuarios
+  // ======================
   static async getUsuarios(q?: string) {
     const query = supabaseAdmin
       .from('usuarios')

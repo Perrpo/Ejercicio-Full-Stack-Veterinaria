@@ -1,13 +1,15 @@
 import { z } from 'zod'
 
-//Usuario
+// ======================
+// Usuario
+// ======================
 export const adminUserSchema = z.object({
   nombre: z.string().min(2),
   apellido: z.string().min(2),
   email: z.string().email(),
   telefono: z.string().min(7),
   direccion: z.string().min(3),
-  rol: z.enum(['cliente','veterinario','admin'])
+  rol: z.enum(['cliente', 'veterinario', 'admin']),
 })
 
 export const adminUserUpdateSchema = adminUserSchema.partial({
@@ -18,7 +20,9 @@ export const adminUserUpdateSchema = adminUserSchema.partial({
 export type AdminUserDTO = z.infer<typeof adminUserSchema>
 export type AdminUserUpdateDTO = z.infer<typeof adminUserUpdateSchema>
 
-//Pacientes
+// ======================
+// Pacientes
+// ======================
 export const adminPacienteSchema = z.object({
   nombre: z.string().min(2),
   especie: z.string().min(3),
@@ -28,16 +32,14 @@ export const adminPacienteSchema = z.object({
   id_usuario: z.string().uuid(),
 })
 
-export const adminPacienteUpdateSchema =
-  adminPacienteSchema.partial()
+export const adminPacienteUpdateSchema = adminPacienteSchema.partial()
 
-export type AdminPacienteDTO =
-  z.infer<typeof adminPacienteSchema>
+export type AdminPacienteDTO = z.infer<typeof adminPacienteSchema>
+export type AdminPacienteUpdateDTO = z.infer<typeof adminPacienteUpdateSchema>
 
-export type AdminPacienteUpdateDTO =
-  z.infer<typeof adminPacienteUpdateSchema>
-
-//Citas
+// ======================
+// Citas
+// ======================
 export const adminCitaSchema = z.object({
   fecha: z.string().datetime(),
   motivo: z.string().min(3),
@@ -47,17 +49,15 @@ export const adminCitaSchema = z.object({
   id_servicio: z.string().uuid(),
 })
 
-export const adminCitaUpdateSchema =
-  adminCitaSchema.partial()
+export const adminCitaUpdateSchema = adminCitaSchema.partial()
 
-export type AdminCitaDTO =
-  z.infer<typeof adminCitaSchema>
+export type AdminCitaDTO = z.infer<typeof adminCitaSchema>
+export type AdminCitaUpdateDTO = z.infer<typeof adminCitaUpdateSchema>
 
-export type AdminCitaUpdateDTO =
-  z.infer<typeof adminCitaUpdateSchema>
-
-  //Examenes
-  export const adminExamenSchema = z.object({
+// ======================
+// Examenes
+// ======================
+export const adminExamenSchema = z.object({
   nombre: z.string().min(2),
   descripcion: z.string().optional(),
   id_paciente: z.string().uuid(),
@@ -69,7 +69,9 @@ export const adminExamenUpdateSchema = adminExamenSchema.partial()
 export type AdminExamenDTO = z.infer<typeof adminExamenSchema>
 export type AdminExamenUpdateDTO = z.infer<typeof adminExamenUpdateSchema>
 
-//Servicios
+// ======================
+// Servicios
+// ======================
 export const adminServicioSchema = z.object({
   nombre: z.string().min(2),
   descripcion: z.string().optional(),
@@ -81,13 +83,18 @@ export const adminServicioUpdateSchema = adminServicioSchema.partial()
 export type AdminServicioDTO = z.infer<typeof adminServicioSchema>
 export type AdminServicioUpdateDTO = z.infer<typeof adminServicioUpdateSchema>
 
-//Pagos
+// ======================
+// Pagos
+// ======================
 export const adminPagoSchema = z.object({
-  id_cita: z.union([z.number().int(), z.string().transform(val => Number(val))]),
-  metodo_pago: z.enum(['tarjeta_credito','efectivo','transferencia']),
-  monto: z.union([z.number().nonnegative(), z.string().transform(val => Number(val))]),
-  fecha_pago: z.string().optional().transform(val => val ? new Date(val).toISOString() : undefined),
-  estado: z.enum(['pendiente','pagado','fallido']),
+  id_cita: z.union([z.number().int(), z.string().transform((val) => Number(val))]),
+  metodo_pago: z.enum(['tarjeta_credito', 'efectivo', 'transferencia']),
+  monto: z.union([z.number().nonnegative(), z.string().transform((val) => Number(val))]),
+  fecha_pago: z
+    .string()
+    .optional()
+    .transform((val) => (val ? new Date(val).toISOString() : undefined)),
+  estado: z.enum(['pendiente', 'pagado', 'fallido']),
 })
 
 export const adminPagoUpdateSchema = adminPagoSchema.partial()
