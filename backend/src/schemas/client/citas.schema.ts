@@ -6,3 +6,5 @@ export const createCitaSchema = z.object({
   fecha_cita: z.string().min(1),
   observaciones: z.string().optional(),
 })
+
+export type CreateCitaDTO = z.infer<typeof createCitaSchema>
