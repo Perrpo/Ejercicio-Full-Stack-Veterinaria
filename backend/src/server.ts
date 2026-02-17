@@ -10,13 +10,28 @@ app.get('/health', async (_req, res) => {
   res.json({ ok: true })
 })
 
+// Rutas
 import authRouter from './routes/auth.routes'
 import adminRouter from './routes/admin.routes'
-import clientRouter from './routes/client.routes'
+
+// Routers de dominios client
+import dashboardRouter from './routes/client/dashboard.routes'
+import perfilRouter from './routes/client/perfil.routes'
+import mascotasRouter from './routes/client/mascotas.routes'
+import citasRouter from './routes/client/citas.routes'
+import serviciosRouter from './routes/client/servicios.routes'
+import examenesRouter from './routes/client/examenes.routes'
 
 app.use('/auth', authRouter)
 app.use('/admin', adminRouter)
-app.use('/client', clientRouter)
+
+// Ahora cada dominio tiene su propio prefijo si quieres
+app.use('/client/dashboard', dashboardRouter)
+app.use('/client/perfil', perfilRouter)
+app.use('/client/mascotas', mascotasRouter)
+app.use('/client/citas', citasRouter)
+app.use('/client/servicios', serviciosRouter)
+app.use('/client/examenes', examenesRouter)
 
 // Middleware de manejo de errores global
 app.use((error: any, req: any, res: any, next: any) => {
@@ -27,7 +42,7 @@ app.use((error: any, req: any, res: any, next: any) => {
   })
 })
 
-// Middleware para rutas no encontradas (se ejecuta solo si ninguna ruta anterior coincide)
+// Middleware para rutas no encontradas
 app.use((req, res) => {
   res.status(404).json({ message: 'Ruta no encontrada' })
 })

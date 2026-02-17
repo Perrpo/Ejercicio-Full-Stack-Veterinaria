@@ -7,9 +7,3 @@ export const createMascotaSchema = z.object({
   edad: z.union([z.number().int().nonnegative(), z.string().transform(Number)]),
   peso: z.union([z.number().nonnegative(), z.string().transform(Number)]),
 })
-
-export const createCitaSchema = z.object({
-  id_paciente: z.union([z.number().int(), z.string().transform(Number)]),
-  id_servicio: z.union([z.number().int(), z.string().transform(Number)]),
-  fecha_cita: z.string().min(1),
-})
