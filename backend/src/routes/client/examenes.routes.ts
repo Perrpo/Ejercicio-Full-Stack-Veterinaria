@@ -5,7 +5,7 @@ import { ExamenesController } from '../../controllers/client/examenes.controller
 
 const router = Router()
 
-router.get('/examenes', authUser, authCliente, ExamenesController.getExamenes)
-router.post('/examenes', authUser, authCliente, ExamenesController.createExamen)
+router.get('/', authUser, authCliente, ExamenesController.getExamenes)
+router.post('/', authUser, authCliente, ExamenesController.createExamen)
 
 export default router

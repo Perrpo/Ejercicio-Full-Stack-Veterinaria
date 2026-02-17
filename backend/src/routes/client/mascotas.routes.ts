@@ -5,8 +5,8 @@ import { MascotasController } from '../../controllers/client/mascotas.controller
 
 const router = Router()
 
-router.get('/mascotas', authUser, authCliente, MascotasController.getMascotas)
-router.post('/mascotas', authUser, authCliente, MascotasController.createMascota)
-router.delete('/mascotas/:id', authUser, authCliente, MascotasController.deleteMascota)
+router.get('/', authUser, authCliente, MascotasController.getMascotas)
+router.post('/', authUser, authCliente, MascotasController.createMascota)
+router.delete('/:id', authUser, authCliente, MascotasController.deleteMascota)
 
 export default router

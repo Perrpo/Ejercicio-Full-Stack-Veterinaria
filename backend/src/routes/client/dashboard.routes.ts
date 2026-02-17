@@ -5,6 +5,6 @@ import { DashboardController } from '../../controllers/client/dashboard.controll
 
 const router = Router()
 
-router.get('/dashboard', authUser, authCliente, DashboardController.getDashboard)
+router.get('/', authUser, authCliente, DashboardController.getDashboard)
 
 export default router

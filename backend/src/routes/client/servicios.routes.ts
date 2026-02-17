@@ -5,6 +5,6 @@ import { ServiciosController } from '../../controllers/client/servicios.controll
 
 const router = Router()
 
-router.get('/servicios', authUser, authCliente, ServiciosController.getServicios)
+router.get('/', authUser, authCliente, ServiciosController.getServicios)
 
 export default router

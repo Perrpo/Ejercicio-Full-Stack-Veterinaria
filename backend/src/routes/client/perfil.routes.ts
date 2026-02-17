@@ -5,7 +5,7 @@ import { PerfilController } from '../../controllers/client/perfil.controller'
 
 const router = Router()
 
-router.get('/perfil', authUser, authCliente, PerfilController.getProfile)
-router.put('/perfil', authUser, authCliente, PerfilController.updateProfile)
+router.get('/', authUser, authCliente, PerfilController.getProfile)
+router.put('/', authUser, authCliente, PerfilController.updateProfile)
 
 export default router

@@ -5,7 +5,7 @@ import { CitasController } from '../../controllers/client/citas.controller'
 
 const router = Router()
 
-router.get('/citas', authUser, authCliente, CitasController.getCitas)
-router.post('/citas', authUser, authCliente, CitasController.createCita)
+router.get('/', authUser, authCliente, CitasController.getCitas)
+router.post('/', authUser, authCliente, CitasController.createCita)
 
 export default router
