@@ -11,8 +11,20 @@ app.get('/health', async (_req, res) => {
 })
 
 // Rutas
-import authRouter from './routes/auth.routes'
+
+//admin
 import adminRouter from './routes/admin.routes'
+app.use('/admin', adminRouter)
+
+
+/* =========================
+   AUTH (dominios)
+========================= */
+import registerRouter from './routes/auth/register.routes'
+import loginRouter from './routes/auth/login.routes'
+
+app.use('/auth/register', registerRouter)
+app.use('/auth/login', loginRouter)
 
 // Routers de dominios client
 import dashboardRouter from './routes/client/dashboard.routes'
@@ -21,9 +33,6 @@ import mascotasRouter from './routes/client/mascotas.routes'
 import citasRouter from './routes/client/citas.routes'
 import serviciosRouter from './routes/client/servicios.routes'
 import examenesRouter from './routes/client/examenes.routes'
-
-app.use('/auth', authRouter)
-app.use('/admin', adminRouter)
 
 // Ahora cada dominio tiene su propio prefijo si quieres
 app.use('/client/dashboard', dashboardRouter)

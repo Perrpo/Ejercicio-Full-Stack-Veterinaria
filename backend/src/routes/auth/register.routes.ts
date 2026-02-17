@@ -4,6 +4,6 @@ import { validateRegister } from '../../middlewares/auth/register.middleware'
 
 const router = Router()
 
-router.post('/register', validateRegister, RegisterController.register)
+router.post('/', validateRegister, RegisterController.register)
 
 export default router
