@@ -7,7 +7,7 @@ export class CitasService {
         fecha_cita,
         estado,
         pacientes(nombre),
-        servicios(nombre)
+        servicios(nombre, precio)
       `)
       .eq('id_usuario', userId)
       .order('fecha_cita', { ascending: false })
@@ -20,6 +20,7 @@ export class CitasService {
       estado: c.estado,
       paciente_nombre: c.pacientes?.nombre,
       servicio_nombre: c.servicios?.nombre,
+       precio: c.servicios?.precio ?? 0,
     }))
   }
 
