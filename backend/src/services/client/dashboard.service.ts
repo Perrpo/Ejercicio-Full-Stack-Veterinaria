@@ -2,7 +2,7 @@ export class DashboardService {
   static async getDashboard(userId: string, supabase: any) {
 
     // ======================
-    // 1️⃣ PACIENTES (igual que antes)
+    // 1️⃣ PACIENTES
     // ======================
     const { data: pacientes, error: pacientesError } = await supabase
       .from('pacientes')
@@ -14,7 +14,7 @@ export class DashboardService {
     }
 
     // ======================
-    // 2️⃣ CITAS (igual que antes)
+    // 2️⃣ CITAS
     // ======================
     const { data: citasRaw, error: citasError } = await supabase
       .from('citas')
@@ -41,7 +41,7 @@ export class DashboardService {
     }))
 
     // ======================
-    // 3️⃣ PAGOS PENDIENTES (SIN romper nada)
+    // 3️⃣ PAGOS PENDIENTES
     // ======================
     const { count: pagosPendientes } = await supabase
       .from('pagos')
@@ -49,7 +49,7 @@ export class DashboardService {
       .eq('estado', 'pendiente')
 
     // ======================
-    // 4️⃣ EXÁMENES RECIENTES (últimos 7 días)
+    // 4️⃣ EXÁMENES RECIENTES
     // ======================
     const sevenDaysAgo = new Date(
       Date.now() - 7 * 24 * 60 * 60 * 1000
@@ -61,7 +61,7 @@ export class DashboardService {
       .gte('fecha_examen', sevenDaysAgo)
 
     // ======================
-    // 5️⃣ RESPUESTA FINAL (COMPATIBLE CON FRONT)
+    // 5️⃣ RESPUESTA FINAL
     // ======================
     return {
       pacientes,
