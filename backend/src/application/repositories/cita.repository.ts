@@ -14,9 +14,8 @@ export class CitaRepository implements ICitaRepository {
       .from('citas')
       .insert(cita)
       .select()
-      .single()
     if (error) throw new Error(`Error guardando cita: ${error.message}`)
-    return data
+    return data && data.length > 0 ? data[0] : null
   }
 
   async findById(id: number) {
@@ -24,9 +23,17 @@ export class CitaRepository implements ICitaRepository {
       .from('citas')
       .select('*')
       .eq('id_cita', id)
-      .single()
-    if (error) return null
-    return data
+    
+    if (error) {
+      console.error('Error en findById:', error)
+      return null
+    }
+    
+    if (!data || data.length === 0) {
+      return null
+    }
+    
+    return data[0]
   }
 
   async findByMascota(idMascota: number) {
@@ -45,7 +52,7 @@ export class CitaRepository implements ICitaRepository {
       .order('fecha_cita', { ascending: false })
 
     if (filtro) {
-      query = query.or(`estado.ilike.${like(filtro)},motivo.ilike.${like(filtro)}`)
+      query = query.or(`estado.ilike.${like(filtro)}`)
     }
 
     const { data, error } = await query
@@ -59,9 +66,9 @@ export class CitaRepository implements ICitaRepository {
       .update(datos)
       .eq('id_cita', id)
       .select()
-      .single()
     if (error) throw new Error(`Error: ${error.message}`)
-    return data
+    if (!data || data.length === 0) throw new Error('Cita no encontrada')
+    return data[0]
   }
 
   async delete(id: number) {

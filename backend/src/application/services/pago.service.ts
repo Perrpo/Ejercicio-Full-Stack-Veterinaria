@@ -27,7 +27,7 @@ export class PagoService {
     return this.pagoRepository.save({
       ...dto,
       estado: EstadoPago.Pendiente,
-      fecha: new Date()
+      fecha_pago: new Date()
     })
   }
 

@@ -15,7 +15,6 @@ export class Cita {
   estado: EstadoCita
   servicios: IServicio[]
   pagos: Pago[]
-  motivo?: string
 
   constructor(
     id: number,
@@ -24,7 +23,6 @@ export class Cita {
     idCliente: string,
     fecha: Date,
     estado: EstadoCita = EstadoCita.Pendiente,
-    motivo?: string,
     servicios: IServicio[] = [],
     pagos: Pago[] = []
   ) {
@@ -34,7 +32,6 @@ export class Cita {
     this.idCliente = idCliente
     this.fecha = fecha
     this.estado = estado
-    this.motivo = motivo
     this.servicios = servicios
     this.pagos = pagos
   }

@@ -11,7 +11,7 @@ export class CitaController {
 
   async crearCita(req: Request, res: Response) {
     try {
-      const { id_usuario, id_paciente, id_servicio, fecha_cita, motivo } = req.body
+      const { id_usuario, id_paciente, id_servicio, fecha_cita } = req.body
 
       if (!id_paciente || !id_servicio || !fecha_cita) {
         return res.status(400).json({
@@ -23,8 +23,7 @@ export class CitaController {
         id_usuario: id_usuario || (req as any).user?.id,
         id_paciente,
         id_servicio,
-        fecha_cita,
-        motivo: motivo || ''
+        fecha_cita
       })
 
       res.status(201).json(cita)
@@ -36,14 +35,13 @@ export class CitaController {
   async obtenerCita(req: Request, res: Response) {
     try {
       const { id } = req.params
-      const cita = await this.citaService.obtenerTodasLasCitas()
-      const citaEspecifica = cita.find((c: any) => c.id === parseInt(id))
+      const cita = await this.citaService.obtenerCitaPorId(parseInt(id))
 
-      if (!citaEspecifica) {
+      if (!cita) {
         return res.status(404).json({ error: 'Cita no encontrada' })
       }
 
-      res.json(citaEspecifica)
+      res.json(cita)
     } catch (error: any) {
       res.status(500).json({ error: error.message })
     }
@@ -99,6 +97,9 @@ export class CitaController {
       const citaActualizada = await this.citaService.actualizarCita(parseInt(id), datos)
       res.json(citaActualizada)
     } catch (error: any) {
+      if (error.message.includes('Cita no encontrada')) {
+        return res.status(404).json({ error: error.message })
+      }
       res.status(400).json({ error: error.message })
     }
   }

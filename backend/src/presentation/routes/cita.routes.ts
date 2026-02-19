@@ -107,8 +107,6 @@ router.get('/:id', (req, res) => citaController.obtenerCita(req, res))
  *               fecha_cita:
  *                 type: string
  *                 format: date-time
- *               motivo:
- *                 type: string
  *     responses:
  *       200:
  *         description: Cita actualizada

@@ -62,6 +62,10 @@ export class CitaService {
     return this.citaRepository.update(id, { estado: EstadoCita.Finalizada })
   }
 
+  async obtenerCitaPorId(id: number) {
+    return this.citaRepository.findById(id)
+  }
+
   async obtenerCitasPorMascota(mascotaId: number) {
     return this.citaRepository.findByMascota(mascotaId)
   }
@@ -71,6 +75,9 @@ export class CitaService {
   }
 
   async actualizarCita(id: number, datos: any) {
+    const cita = await this.citaRepository.findById(id)
+    if (!cita) throw new Error('Cita no encontrada')
+    
     return this.citaRepository.update(id, datos)
   }
 

@@ -66,10 +66,6 @@ const options: swaggerJsdoc.Options = {
               type: 'string',
               enum: ['pendiente', 'confirmada', 'cancelada', 'finalizada'],
               description: 'Estado actual de la cita'
-            },
-            motivo: {
-              type: 'string',
-              description: 'Motivo de la consulta'
             }
           }
         },
@@ -93,10 +89,6 @@ const options: swaggerJsdoc.Options = {
               type: 'string',
               format: 'date-time',
               example: '2026-02-20T10:00:00'
-            },
-            motivo: {
-              type: 'string',
-              example: 'Consulta general'
             }
           }
         },
