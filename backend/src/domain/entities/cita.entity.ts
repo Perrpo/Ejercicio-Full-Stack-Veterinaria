@@ -39,6 +39,10 @@ export class Cita {
     this.pagos = pagos
   }
 
+  asignarVeterinarioAutomatico(idVeterinario: string): void {
+    this.idVeterinario = idVeterinario
+  }
+
   agregarServicio(servicio: IServicio): void {
     this.servicios.push(servicio)
   }

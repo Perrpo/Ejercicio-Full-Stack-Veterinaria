@@ -4,12 +4,15 @@
  */
 
 import { PagoRepository, CitaRepository } from '../repositories'
+import { IPagoRepository, ICitaRepository } from '../interfaces'
 import { EstadoPago } from '../../domain/enums'
 import { CreatePagoDTO } from '../../shared/types'
 
 export class PagoService {
-  private pagoRepository = new PagoRepository()
-  private citaRepository = new CitaRepository()
+  constructor(
+    private pagoRepository: IPagoRepository = new PagoRepository(),
+    private citaRepository: ICitaRepository = new CitaRepository()
+  ) {}
 
   async crearPago(dto: CreatePagoDTO) {
     // Validar que cita existe
@@ -24,7 +27,7 @@ export class PagoService {
     return this.pagoRepository.save({
       ...dto,
       estado: EstadoPago.Pendiente,
-      fecha_pago: new Date()
+      fecha: new Date()
     })
   }
 

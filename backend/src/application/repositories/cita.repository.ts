@@ -4,7 +4,7 @@
  */
 
 import { supabaseAdmin } from '../../supabase'
-import { ICitaRepository } from '../../shared/types'
+import { ICitaRepository } from '../interfaces'
 
 const like = (q?: string) => `%${(q || '').trim()}%`
 

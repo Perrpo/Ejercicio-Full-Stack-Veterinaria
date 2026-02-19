@@ -4,7 +4,7 @@
  */
 
 import { supabaseAdmin } from '../../supabase'
-import { IPagoRepository } from '../../shared/types'
+import { IPagoRepository } from '../interfaces'
 
 export class PagoRepository implements IPagoRepository {
   async save(pago: any) {

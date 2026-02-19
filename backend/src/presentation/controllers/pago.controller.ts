@@ -7,7 +7,7 @@ import { Request, Response } from 'express'
 import { PagoService } from '../../application/services'
 
 export class PagoController {
-  private pagoService = new PagoService()
+  constructor(private pagoService: PagoService = new PagoService()) {}
 
   async crearPago(req: Request, res: Response) {
     try {

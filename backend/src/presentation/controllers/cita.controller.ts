@@ -7,7 +7,7 @@ import { Request, Response } from 'express'
 import { CitaService } from '../../application/services'
 
 export class CitaController {
-  private citaService = new CitaService()
+  constructor(private citaService: CitaService = new CitaService()) {}
 
   async crearCita(req: Request, res: Response) {
     try {

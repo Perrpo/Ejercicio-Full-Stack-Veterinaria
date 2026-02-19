@@ -4,7 +4,7 @@
  */
 
 import { supabaseAdmin } from '../../supabase'
-import { IMascotaRepository } from '../../shared/types'
+import { IMascotaRepository } from '../interfaces'
 
 export class MascotaRepository implements IMascotaRepository {
   async save(mascota: any) {

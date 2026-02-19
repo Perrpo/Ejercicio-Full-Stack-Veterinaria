@@ -4,12 +4,15 @@
  */
 
 import { CitaRepository, MascotaRepository } from '../repositories'
+import { ICitaRepository, IMascotaRepository } from '../interfaces'
 import { EstadoCita } from '../../domain/enums'
 import { CreateCitaDTO } from '../../shared/types'
 
 export class CitaService {
-  private citaRepository = new CitaRepository()
-  private mascotaRepository = new MascotaRepository()
+  constructor(
+    private citaRepository: ICitaRepository = new CitaRepository(),
+    private mascotaRepository: IMascotaRepository = new MascotaRepository()
+  ) {}
 
   async crearCita(dto: CreateCitaDTO) {
     // Validar que mascota existe
@@ -19,7 +22,7 @@ export class CitaService {
     }
 
     // Validar que pertenece al cliente
-    if (mascota.id_usuario !== dto.id_usuario) {
+    if (mascota.idCliente !== dto.id_usuario) {
       throw new Error('La mascota no pertenece a este cliente')
     }
 
