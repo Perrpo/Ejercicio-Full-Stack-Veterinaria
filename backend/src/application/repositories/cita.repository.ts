@@ -38,15 +38,6 @@ export class CitaRepository implements ICitaRepository {
     return data || []
   }
 
-  async findByCliente(idCliente: string) {
-    const { data, error } = await supabaseAdmin
-      .from('citas')
-      .select('*')
-      .eq('id_usuario', idCliente)
-    if (error) throw new Error(`Error: ${error.message}`)
-    return data || []
-  }
-
   async findAll(filtro?: string) {
     let query = supabaseAdmin
       .from('citas')

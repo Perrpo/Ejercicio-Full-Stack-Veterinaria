@@ -62,10 +62,6 @@ export class CitaService {
     return this.citaRepository.update(id, { estado: EstadoCita.Finalizada })
   }
 
-  async obtenerCitasPorCliente(clienteId: string) {
-    return this.citaRepository.findByCliente(clienteId)
-  }
-
   async obtenerCitasPorMascota(mascotaId: number) {
     return this.citaRepository.findByMascota(mascotaId)
   }

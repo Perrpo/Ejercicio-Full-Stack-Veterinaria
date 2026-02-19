@@ -49,16 +49,6 @@ export class CitaController {
     }
   }
 
-  async obtenerCitasCliente(req: Request, res: Response) {
-    try {
-      const clienteId = (req as any).user?.id
-      const citas = await this.citaService.obtenerCitasPorCliente(clienteId)
-      res.json(citas)
-    } catch (error: any) {
-      res.status(500).json({ error: error.message })
-    }
-  }
-
   async obtenerTodasCitas(req: Request, res: Response) {
     try {
       const { filtro } = req.query

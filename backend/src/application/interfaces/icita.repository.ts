@@ -9,7 +9,6 @@ export interface ICitaRepository {
   save(c: any): Promise<any>
   findById(id: number): Promise<any>
   findByMascota(idMascota: number): Promise<any[]>
-  findByCliente(idCliente: string): Promise<any[]>
   findAll(filtro?: string): Promise<any[]>
   update(id: number, data: Partial<any>): Promise<any>
   delete(id: number): Promise<boolean>

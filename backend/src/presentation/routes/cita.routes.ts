@@ -57,24 +57,6 @@ router.get('/', (req, res) => citaController.obtenerTodasCitas(req, res))
 
 /**
  * @swagger
- * /api/citas/cliente:
- *   get:
- *     summary: Obtener citas del cliente autenticado
- *     tags: [Citas]
- *     responses:
- *       200:
- *         description: Lista de citas del cliente
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/Cita'
- */
-router.get('/cliente', (req, res) => citaController.obtenerCitasCliente(req, res))
-
-/**
- * @swagger
  * /api/citas/{id}:
  *   get:
  *     summary: Obtener una cita específica
