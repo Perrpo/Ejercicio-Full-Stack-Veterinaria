@@ -2,24 +2,10 @@
  * DOMAIN LAYER - Servicio de Radiografía
  */
 
-import { IServicio } from './servicios'
+import { ServicioBase } from './servicios'
 
-export class Radiografia implements IServicio {
-  id: number
-  nombre = 'Radiografía'
-  descripcion = 'Servicio de radiografía para diagnóstico'
-  precioBase = 250
-  duracionMinutos = 30
-
+export class Radiografia extends ServicioBase {
   constructor(id: number) {
-    this.id = id
-  }
-
-  calcularPrecio(): number {
-    return this.precioBase
-  }
-
-  duracion(): number {
-    return this.duracionMinutos
+    super(id, 'Radiografía', 'Servicio de radiografía para diagnóstico', 250, 30)
   }
 }

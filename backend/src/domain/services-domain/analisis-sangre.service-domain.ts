@@ -2,24 +2,10 @@
  * DOMAIN LAYER - Servicio de Análisis de Sangre
  */
 
-import { IServicio } from './servicios'
+import { ServicioBase } from './servicios'
 
-export class AnalisisSangre implements IServicio {
-  id: number
-  nombre = 'Análisis de Sangre'
-  descripcion = 'Análisis de laboratorio de sangre'
-  precioBase = 200
-  duracionMinutos = 15
-
+export class AnalisisSangre extends ServicioBase {
   constructor(id: number) {
-    this.id = id
-  }
-
-  calcularPrecio(): number {
-    return this.precioBase
-  }
-
-  duracion(): number {
-    return this.duracionMinutos
+    super(id, 'Análisis de Sangre', 'Análisis de laboratorio de sangre', 200, 15)
   }
 }

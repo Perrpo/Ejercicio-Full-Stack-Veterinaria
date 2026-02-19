@@ -1,14 +1,45 @@
 /**
  * DOMAIN LAYER - Servicios de Dominio Veterinarios
- * Interface base para servicios
+ * Contratos de servicios (sin exponer atributos mutables)
  */
 
 export interface IServicio {
-  id: number
-  nombre: string
-  descripcion?: string
+  getId(): number
+  getNombre(): string
+  getDescripcion(): string
   calcularPrecio(): number
   duracion(): number
+}
+
+// Implementación base para reducir duplicación y respetar encapsulación
+export abstract class ServicioBase implements IServicio {
+  constructor(
+    private readonly id: number,
+    private readonly nombre: string,
+    private readonly descripcion: string,
+    private readonly precioBase: number,
+    private readonly duracionMinutos: number
+  ) {}
+
+  getId(): number {
+    return this.id
+  }
+
+  getNombre(): string {
+    return this.nombre
+  }
+
+  getDescripcion(): string {
+    return this.descripcion
+  }
+
+  calcularPrecio(): number {
+    return this.precioBase
+  }
+
+  duracion(): number {
+    return this.duracionMinutos
+  }
 }
 
 // Re-exportar todas las implementaciones

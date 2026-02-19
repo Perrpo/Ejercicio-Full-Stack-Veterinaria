@@ -2,24 +2,10 @@
  * DOMAIN LAYER - Servicio de Cirugía Menor
  */
 
-import { IServicio } from './servicios'
+import { ServicioBase } from './servicios'
 
-export class CirugiaMenor implements IServicio {
-  id: number
-  nombre = 'Cirugía Menor'
-  descripcion = 'Cirugías menores y procedimientos quirúrgicos simples'
-  precioBase = 500
-  duracionMinutos = 90
-
+export class CirugiaMenor extends ServicioBase {
   constructor(id: number) {
-    this.id = id
-  }
-
-  calcularPrecio(): number {
-    return this.precioBase
-  }
-
-  duracion(): number {
-    return this.duracionMinutos
+    super(id, 'Cirugía Menor', 'Procedimientos quirúrgicos menores', 500, 60)
   }
 }

@@ -2,24 +2,10 @@
  * DOMAIN LAYER - Servicio de Consulta
  */
 
-import { IServicio } from './servicios'
+import { ServicioBase } from './servicios'
 
-export class Consulta implements IServicio {
-  id: number
-  nombre = 'Consulta'
-  descripcion = 'Consulta general con el veterinario'
-  precioBase = 100
-  duracionMinutos = 30
-
+export class Consulta extends ServicioBase {
   constructor(id: number) {
-    this.id = id
-  }
-
-  calcularPrecio(): number {
-    return this.precioBase
-  }
-
-  duracion(): number {
-    return this.duracionMinutos
+    super(id, 'Consulta', 'Consulta general con el veterinario', 100, 30)
   }
 }

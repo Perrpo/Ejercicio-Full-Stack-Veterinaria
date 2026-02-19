@@ -2,24 +2,10 @@
  * DOMAIN LAYER - Servicio de Limpieza Dental
  */
 
-import { IServicio } from './servicios'
+import { ServicioBase } from './servicios'
 
-export class LimpiezaDental implements IServicio {
-  id: number
-  nombre = 'Limpieza Dental'
-  descripcion = 'Limpieza y profilaxis dental'
-  precioBase = 350
-  duracionMinutos = 45
-
+export class LimpiezaDental extends ServicioBase {
   constructor(id: number) {
-    this.id = id
-  }
-
-  calcularPrecio(): number {
-    return this.precioBase
-  }
-
-  duracion(): number {
-    return this.duracionMinutos
+    super(id, 'Limpieza Dental', 'Limpieza y profilaxis dental', 350, 45)
   }
 }

@@ -2,25 +2,15 @@
  * DOMAIN LAYER - Servicio de Urgencias
  */
 
-import { IServicio } from './servicios'
+import { ServicioBase } from './servicios'
 
-export class Urgencias implements IServicio {
-  id: number
-  nombre = 'Urgencias'
-  descripcion = 'Atención de emergencias 24/7'
-  precioBase = 400
-  duracionMinutos = 60
-
+export class Urgencias extends ServicioBase {
   constructor(id: number) {
-    this.id = id
+    super(id, 'Urgencias', 'Atención de emergencias 24/7', 400, 60)
   }
 
+  // Urgencias tiene recargo dinámico
   calcularPrecio(): number {
-    // Porcentaje adicional por urgencia
-    return this.precioBase * 1.5
-  }
-
-  duracion(): number {
-    return this.duracionMinutos
+    return super.calcularPrecio() * 1.5
   }
 }
